@@ -1,15 +1,19 @@
-import { Calendar } from "lucide-react";
-import { useRoomBookings } from "@/hooks/use-signage-data";
+import { Calendar, Clock } from "lucide-react";
+import { useTodayRoomBookings, useUpcomingRoomBookings } from "@/hooks/use-signage-data";
 
 export function RoomUsage() {
-  const { data: bookings, isLoading, error } = useRoomBookings();
+  const { data: todayBookings, isLoading: isLoadingToday, error: errorToday } = useTodayRoomBookings();
+  const { data: upcomingBookings, isLoading: isLoadingUpcoming, error: errorUpcoming } = useUpcomingRoomBookings();
+
+  const isLoading = isLoadingToday || isLoadingUpcoming;
+  const hasError = errorToday || errorUpcoming;
 
   if (isLoading) {
     return (
       <section className="col-span-7 section-card p-12">
         <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
           <Calendar className="text-church-yellow mr-4" size={32} />
-          HEUTE IN UNSEREN RÄUMEN
+          RAUMBELEGUNGEN
         </h2>
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-church-blue mx-auto"></div>
@@ -19,12 +23,12 @@ export function RoomUsage() {
     );
   }
 
-  if (error) {
+  if (hasError) {
     return (
       <section className="col-span-7 section-card p-12">
         <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
           <Calendar className="text-church-yellow mr-4" size={32} />
-          HEUTE IN UNSEREN RÄUMEN
+          RAUMBELEGUNGEN
         </h2>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
           <p className="text-xl-custom text-red-800">
@@ -42,36 +46,73 @@ export function RoomUsage() {
         RAUMBELEGUNGEN
       </h2>
       
-      <div className="space-y-4">
-        {bookings && bookings.length > 0 ? (
-          bookings.map((booking) => (
-            <div key={booking.id} className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
-              <div className="flex items-center space-x-6">
-                <div className="w-3 h-3 bg-church-yellow rounded-full"></div>
-                <div>
-                  <span className="text-2xl-custom font-medium text-gray-800">
-                    {booking.title}
-                  </span>
-                  <p className="text-lg text-gray-500">{booking.resource}</p>
+      {/* Today's bookings section */}
+      <div className="mb-8">
+        <h3 className="text-2xl-custom font-medium text-gray-700 mb-4 flex items-center">
+          <Clock className="text-church-yellow mr-3" size={24} />
+          Heute
+        </h3>
+        <div className="space-y-3">
+          {todayBookings && todayBookings.length > 0 ? (
+            todayBookings.map((booking) => (
+              <div key={booking.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                <div className="flex items-center space-x-4">
+                  <div className="w-3 h-3 bg-church-yellow rounded-full"></div>
+                  <div>
+                    <span className="text-xl-custom font-medium text-gray-800">
+                      {booking.title}
+                    </span>
+                    <p className="text-lg text-gray-500">{booking.resource}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <div className="text-2xl-custom text-gray-600 font-medium">
+                <div className="text-xl-custom text-gray-600 font-medium">
                   {booking.startTime}–{booking.endTime}
                 </div>
-                <div className="text-lg text-gray-500">
-                  {booking.date}
+              </div>
+            ))
+          ) : (
+            <p className="text-xl-custom text-gray-500 py-4">
+              Heute sind keine Räume gebucht.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Upcoming bookings section */}
+      <div>
+        <h3 className="text-2xl-custom font-medium text-gray-700 mb-4 flex items-center">
+          <Calendar className="text-church-yellow mr-3" size={24} />
+          Anstehend
+        </h3>
+        <div className="space-y-3">
+          {upcomingBookings && upcomingBookings.length > 0 ? (
+            upcomingBookings.map((booking) => (
+              <div key={booking.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                <div className="flex items-center space-x-4">
+                  <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                  <div>
+                    <span className="text-xl-custom font-medium text-gray-800">
+                      {booking.title}
+                    </span>
+                    <p className="text-lg text-gray-500">{booking.resource}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xl-custom text-gray-600 font-medium">
+                    {booking.startTime}–{booking.endTime}
+                  </div>
+                  <div className="text-lg text-gray-500">
+                    {booking.date}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-2xl-custom text-gray-500">
-              Keine anstehenden Raumbelegungen.
+            ))
+          ) : (
+            <p className="text-xl-custom text-gray-500 py-4">
+              Keine anstehenden Buchungen.
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );

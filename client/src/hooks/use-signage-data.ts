@@ -10,7 +10,15 @@ interface SignageEvent {
   location?: string;
 }
 
-interface RoomBooking {
+interface TodayRoomBooking {
+  id: number;
+  title: string;
+  startTime: string;
+  endTime: string;
+  resource: string;
+}
+
+interface UpcomingRoomBooking {
   id: number;
   title: string;
   startTime: string;
@@ -47,9 +55,17 @@ export function useSignageEvent() {
   });
 }
 
-export function useRoomBookings() {
-  return useQuery<RoomBooking[]>({
-    queryKey: ["/api/signage/bookings"],
+export function useTodayRoomBookings() {
+  return useQuery<TodayRoomBooking[]>({
+    queryKey: ["/api/signage/bookings/today"],
+    refetchInterval: 15 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
+export function useUpcomingRoomBookings() {
+  return useQuery<UpcomingRoomBooking[]>({
+    queryKey: ["/api/signage/bookings/upcoming"],
     refetchInterval: 15 * 60 * 1000,
     staleTime: 10 * 60 * 1000,
   });

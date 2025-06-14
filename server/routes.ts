@@ -69,7 +69,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/signage/bookings", async (req, res) => {
+  app.get("/api/signage/bookings/today", async (req, res) => {
     try {
       // Try ChurchTools first
       const churchToolsBookings = await churchToolsService.getTodayBookings();
@@ -86,18 +86,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             hour: '2-digit',
             minute: '2-digit'
           }),
-          date: new Date(booking.startdate).toLocaleDateString('de-DE', {
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short'
-          }),
           resource: booking.resource.name
         }));
         
         res.json(formattedBookings);
       } else {
-        // Fallback to stored upcoming bookings (7 days)
-        const bookings = await storage.getUpcomingRoomBookings(7);
+        // Fallback to stored today's bookings
+        const bookings = await storage.getTodayRoomBookings();
         const formattedBookings = bookings.map(booking => ({
           id: booking.id,
           title: booking.title,
@@ -109,19 +104,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
             hour: '2-digit',
             minute: '2-digit'
           }),
-          date: new Date(booking.startTime).toLocaleDateString('de-DE', {
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short'
-          }),
           resource: booking.resourceName
         }));
         
         res.json(formattedBookings);
       }
     } catch (error) {
-      console.error("Error fetching bookings:", error);
-      res.status(500).json({ message: "Fehler beim Laden der Raumbelegungen" });
+      console.error("Error fetching today's bookings:", error);
+      res.status(500).json({ message: "Fehler beim Laden der heutigen Raumbelegungen" });
+    }
+  });
+
+  app.get("/api/signage/bookings/upcoming", async (req, res) => {
+    try {
+      // For upcoming bookings, use stored data (starts from tomorrow)
+      const bookings = await storage.getUpcomingRoomBookings(7);
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      const upcomingBookings = bookings.filter(booking => 
+        new Date(booking.startTime) >= tomorrow
+      ).slice(0, 5); // Limit to 5 upcoming bookings
+      
+      const formattedBookings = upcomingBookings.map(booking => ({
+        id: booking.id,
+        title: booking.title,
+        startTime: new Date(booking.startTime).toLocaleTimeString('de-DE', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        endTime: new Date(booking.endTime).toLocaleTimeString('de-DE', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        date: new Date(booking.startTime).toLocaleDateString('de-DE', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short'
+        }),
+        resource: booking.resourceName
+      }));
+      
+      res.json(formattedBookings);
+    } catch (error) {
+      console.error("Error fetching upcoming bookings:", error);
+      res.status(500).json({ message: "Fehler beim Laden der anstehenden Raumbelegungen" });
     }
   });
 
