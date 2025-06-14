@@ -101,7 +101,14 @@ The application is built as a modern web application that can run continuously o
 
 ```
 Changelog:
-- June 14, 2025. Initial setup
+- June 14, 2025. Initial setup with 4K vertical digital signage display
+- June 14, 2025. Implemented improvements based on user feedback:
+  • Extended room usage to show upcoming bookings (7 days) with dates
+  • Fixed events display with proper future dates
+  • Reduced height of birthdays section (smaller avatars, compact layout)
+  • Reduced height of bible verse section (smaller text, compact spacing)
+  • Added church logo integration from provided assets
+  • Enhanced room bookings with date information for better context
 ```
 
 ## User Preferences
