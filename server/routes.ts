@@ -168,8 +168,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Default verse if none found
         res.json({
           id: 0,
-          text: "„Jesus redete zu ihnen und sprach: Ich bin das Licht der Welt. Wer mir nachfolgt, wird nicht in der Finsternis wandeln, sondern das Licht des Lebens haben."",
-          reference: "— Johannes 8:12"
+          text: "Jesus redete zu ihnen und sprach: Ich bin das Licht der Welt. Wer mir nachfolgt, wird nicht in der Finsternis wandeln, sondern das Licht des Lebens haben.",
+          reference: "Johannes 8:12"
         });
       }
     } catch (error) {

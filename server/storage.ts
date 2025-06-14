@@ -71,7 +71,13 @@ export class MemStorage implements IStorage {
 
   async createEvent(insertEvent: InsertEvent): Promise<Event> {
     const id = this.currentId++;
-    const event: Event = { ...insertEvent, id };
+    const event: Event = { 
+      ...insertEvent, 
+      id,
+      description: insertEvent.description || null,
+      imageUrl: insertEvent.imageUrl || null,
+      location: insertEvent.location || null
+    };
     this.events.set(id, event);
     return event;
   }
@@ -119,7 +125,11 @@ export class MemStorage implements IStorage {
 
   async createBirthday(insertBirthday: InsertBirthday): Promise<Birthday> {
     const id = this.currentId++;
-    const birthday: Birthday = { ...insertBirthday, id };
+    const birthday: Birthday = { 
+      ...insertBirthday, 
+      id,
+      avatarUrl: insertBirthday.avatarUrl || null
+    };
     this.birthdays.set(id, birthday);
     return birthday;
   }
