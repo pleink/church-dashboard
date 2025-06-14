@@ -73,7 +73,7 @@ The application is built as a modern web application that can run continuously o
 - **Connection Pooling**: Managed through Neon serverless architecture
 
 ### UI/UX Dependencies
-- **Google Fonts**: Poppins font family for consistent typography
+- **Google Fonts**: Spartan font family for consistent typography
 - **Lucide React**: Icon library for UI elements
 - **Unsplash**: Fallback images for events without custom imagery
 - **Custom CSS**: Church-specific color scheme and responsive design

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Spartan:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,8 +26,8 @@
   --radius: 0.5rem;
   
   /* Church specific colors */
-  --church-blue: hsl(197, 68%, 17%);
-  --church-yellow: hsl(54, 96%, 52%);
+  --church-blue: hsl(211, 70%, 30%);
+  --church-yellow: hsl(48, 100%, 56%);
 }
 
 .dark {
@@ -60,15 +60,13 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Spartan', sans-serif;
   }
 }
 
 /* Custom styles for 4K display optimization */
 .signage-container {
-  width: 2160px;
-  height: 3840px;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Spartan', sans-serif;
 }
 
 .section-card {
