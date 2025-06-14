@@ -16,6 +16,7 @@ export interface IStorage {
   
   // Room Bookings
   getTodayRoomBookings(): Promise<RoomBooking[]>;
+  getUpcomingRoomBookings(days?: number): Promise<RoomBooking[]>;
   createRoomBooking(booking: InsertRoomBooking): Promise<RoomBooking>;
   
   // Birthdays
@@ -52,9 +53,9 @@ export class MemStorage implements IStorage {
     await this.createEvent({
       title: "Tag der offenen Tür",
       description: "Gebäudeführung, Kinderattraktionen, Kaffee und Kuchen",
-      startDate: new Date(2024, 5, 1, 13, 0), // June 1, 2024, 13:00
-      endDate: new Date(2024, 5, 1, 17, 0), // June 1, 2024, 17:00
-      imageUrl: "/assets/image_1749912981916.png",
+      startDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+      endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000), // 4 hours later
+      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=400&fit=crop",
       location: "Habsburgstr. 17, 8037 Zürich"
     });
 
@@ -82,6 +83,37 @@ export class MemStorage implements IStorage {
       endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 30),
       resourceName: "Jugendraum",
       bookingDate: today
+    });
+
+    // Add upcoming room bookings for next few days
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    
+    await this.createRoomBooking({
+      title: "Gebetskreis",
+      startTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 9, 0),
+      endTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 10, 0),
+      resourceName: "Kapelle",
+      bookingDate: tomorrow
+    });
+
+    await this.createRoomBooking({
+      title: "Worship Team Probe",
+      startTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 18, 0),
+      endTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 20, 0),
+      resourceName: "Hauptraum",
+      bookingDate: tomorrow
+    });
+
+    const dayAfter = new Date(today);
+    dayAfter.setDate(today.getDate() + 2);
+    
+    await this.createRoomBooking({
+      title: "Seniorentreff",
+      startTime: new Date(dayAfter.getFullYear(), dayAfter.getMonth(), dayAfter.getDate(), 14, 30),
+      endTime: new Date(dayAfter.getFullYear(), dayAfter.getMonth(), dayAfter.getDate(), 16, 30),
+      resourceName: "Seminarraum",
+      bookingDate: dayAfter
     });
 
     // Sample birthdays this week
@@ -147,17 +179,30 @@ export class MemStorage implements IStorage {
   }
 
   async getTodayRoomBookings(): Promise<RoomBooking[]> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const now = new Date();
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
 
     return Array.from(this.roomBookings.values())
       .filter(booking => {
-        const bookingDate = new Date(booking.bookingDate);
-        return bookingDate >= today && bookingDate < tomorrow;
+        const startTime = new Date(booking.startTime);
+        return startTime >= now && startTime <= endOfDay;
       })
       .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+  }
+
+  async getUpcomingRoomBookings(days = 7): Promise<RoomBooking[]> {
+    const now = new Date();
+    const endDate = new Date(now);
+    endDate.setDate(now.getDate() + days);
+
+    return Array.from(this.roomBookings.values())
+      .filter(booking => {
+        const startTime = new Date(booking.startTime);
+        return startTime >= now && startTime <= endDate;
+      })
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+      .slice(0, 6); // Limit to 6 upcoming bookings
   }
 
   async createRoomBooking(insertBooking: InsertRoomBooking): Promise<RoomBooking> {

@@ -39,15 +39,15 @@ export function RoomUsage() {
     <section className="col-span-7 section-card p-12">
       <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
         <Calendar className="text-church-yellow mr-4" size={32} />
-        HEUTE IN UNSEREN RÄUMEN
+        RAUMBELEGUNGEN
       </h2>
       
-      <div className="space-y-6">
+      <div className="space-y-4">
         {bookings && bookings.length > 0 ? (
           bookings.map((booking) => (
-            <div key={booking.id} className="flex items-center justify-between py-4 border-b border-gray-200">
+            <div key={booking.id} className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
               <div className="flex items-center space-x-6">
-                <div className="w-4 h-4 bg-church-yellow rounded-full"></div>
+                <div className="w-3 h-3 bg-church-yellow rounded-full"></div>
                 <div>
                   <span className="text-2xl-custom font-medium text-gray-800">
                     {booking.title}
@@ -55,15 +55,20 @@ export function RoomUsage() {
                   <p className="text-lg text-gray-500">{booking.resource}</p>
                 </div>
               </div>
-              <div className="text-2xl-custom text-gray-600 font-medium">
-                {booking.startTime}–{booking.endTime}
+              <div className="text-right">
+                <div className="text-2xl-custom text-gray-600 font-medium">
+                  {booking.startTime}–{booking.endTime}
+                </div>
+                <div className="text-lg text-gray-500">
+                  {booking.date}
+                </div>
               </div>
             </div>
           ))
         ) : (
           <div className="text-center py-8">
             <p className="text-2xl-custom text-gray-500">
-              Heute sind keine Räume gebucht.
+              Keine anstehenden Raumbelegungen.
             </p>
           </div>
         )}

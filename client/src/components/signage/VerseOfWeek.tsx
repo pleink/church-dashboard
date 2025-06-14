@@ -42,23 +42,23 @@ export function VerseOfWeek() {
   }
 
   return (
-    <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
-      <h2 className="text-3xl-custom font-semibold mb-8 flex items-center">
+    <section className="col-span-5 verse-block text-white p-8 rounded-2xl">
+      <h2 className="text-3xl-custom font-semibold mb-6 flex items-center">
         <Book className="text-church-yellow mr-4" size={32} />
         VERS DER WOCHE
       </h2>
       
-      <div className="space-y-6">
-        <blockquote className="text-2xl-custom leading-relaxed font-medium">
+      <div className="space-y-4">
+        <blockquote className="text-xl-custom leading-relaxed font-medium">
           {verse.text}
         </blockquote>
-        <cite className="text-xl-custom text-church-yellow font-semibold block">
+        <cite className="text-lg text-church-yellow font-semibold block">
           {verse.reference}
         </cite>
       </div>
       
-      <div className="mt-8 flex justify-end">
-        <Book className="text-6xl text-church-yellow opacity-20" size={96} />
+      <div className="mt-6 flex justify-end">
+        <Book className="text-4xl text-church-yellow opacity-20" size={64} />
       </div>
     </section>
   );

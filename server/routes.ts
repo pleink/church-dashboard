@@ -86,13 +86,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             hour: '2-digit',
             minute: '2-digit'
           }),
+          date: new Date(booking.startdate).toLocaleDateString('de-DE', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+          }),
           resource: booking.resource.name
         }));
         
         res.json(formattedBookings);
       } else {
-        // Fallback to stored bookings
-        const bookings = await storage.getTodayRoomBookings();
+        // Fallback to stored upcoming bookings (7 days)
+        const bookings = await storage.getUpcomingRoomBookings(7);
         const formattedBookings = bookings.map(booking => ({
           id: booking.id,
           title: booking.title,
@@ -103,6 +108,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           endTime: new Date(booking.endTime).toLocaleTimeString('de-DE', {
             hour: '2-digit',
             minute: '2-digit'
+          }),
+          date: new Date(booking.startTime).toLocaleDateString('de-DE', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
           }),
           resource: booking.resourceName
         }));

@@ -36,17 +36,17 @@ export function Birthdays() {
   }
 
   return (
-    <section className="col-span-7 section-card p-12">
-      <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
+    <section className="col-span-7 section-card p-8">
+      <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
         <Cake className="text-church-yellow mr-4" size={32} />
         DIESE WOCHE FEIERN WIR...
       </h2>
       
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-2 gap-6">
         {birthdays && birthdays.length > 0 ? (
           birthdays.slice(0, 4).map((person) => (
-            <div key={person.id} className="flex items-center space-x-6">
-              <div className="w-24 h-24 avatar-placeholder rounded-full flex items-center justify-center">
+            <div key={person.id} className="flex items-center space-x-4">
+              <div className="w-16 h-16 avatar-placeholder rounded-full flex items-center justify-center">
                 {person.avatar ? (
                   <img 
                     src={person.avatar} 
@@ -54,22 +54,22 @@ export function Birthdays() {
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  <User className="text-white text-2xl" size={32} />
+                  <User className="text-white text-xl" size={24} />
                 )}
               </div>
               <div>
-                <h3 className="text-2xl-custom font-semibold text-gray-800">
+                <h3 className="text-xl-custom font-semibold text-gray-800">
                   {person.name}
                 </h3>
-                <p className="text-xl-custom text-gray-600">
+                <p className="text-lg text-gray-600">
                   {person.birthdayText}
                 </p>
               </div>
             </div>
           ))
         ) : (
-          <div className="col-span-2 text-center py-8">
-            <p className="text-2xl-custom text-gray-500">
+          <div className="col-span-2 text-center py-4">
+            <p className="text-xl-custom text-gray-500">
               Diese Woche hat niemand Geburtstag.
             </p>
           </div>

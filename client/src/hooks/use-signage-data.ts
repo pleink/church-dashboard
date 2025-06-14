@@ -15,6 +15,7 @@ interface RoomBooking {
   title: string;
   startTime: string;
   endTime: string;
+  date: string;
   resource: string;
 }
 
