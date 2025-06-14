@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Church, Clock } from "lucide-react";
+import logoPath from "@assets/Group 3_1749912859187.png";
 
 export function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -28,10 +28,12 @@ export function Header() {
   return (
     <header className="bg-white shadow-sm px-16 py-12 flex justify-between items-center">
       <div className="flex items-center space-x-8">
-        <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 bg-church-blue rounded-full flex items-center justify-center">
-            <Church className="text-white text-3xl" size={48} />
-          </div>
+        <div className="flex items-center space-x-6">
+          <img 
+            src={logoPath} 
+            alt="Freie Kirche Wipkingen Logo" 
+            className="h-24 w-auto object-contain"
+          />
           <div>
             <h1 className="text-4xl-custom font-bold text-church-blue">Freie Kirche</h1>
             <p className="text-2xl-custom text-gray-600 -mt-2">Wipkingen</p>

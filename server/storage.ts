@@ -42,6 +42,70 @@ export class MemStorage implements IStorage {
     this.birthdays = new Map();
     this.verses = new Map();
     this.currentId = 1;
+    
+    // Initialize with sample data
+    this.initializeSampleData();
+  }
+
+  private async initializeSampleData() {
+    // Sample upcoming event - using one of your actual flyers
+    await this.createEvent({
+      title: "Tag der offenen Tür",
+      description: "Gebäudeführung, Kinderattraktionen, Kaffee und Kuchen",
+      startDate: new Date(2024, 5, 1, 13, 0), // June 1, 2024, 13:00
+      endDate: new Date(2024, 5, 1, 17, 0), // June 1, 2024, 17:00
+      imageUrl: "/assets/image_1749912981916.png",
+      location: "Habsburgstr. 17, 8037 Zürich"
+    });
+
+    // Sample room bookings for today
+    const today = new Date();
+    await this.createRoomBooking({
+      title: "Hauskreis",
+      startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0),
+      endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0),
+      resourceName: "Hauptraum",
+      bookingDate: today
+    });
+
+    await this.createRoomBooking({
+      title: "Bibelstunde",
+      startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0),
+      endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0),
+      resourceName: "Seminarraum",
+      bookingDate: today
+    });
+
+    await this.createRoomBooking({
+      title: "Jugendtreff",
+      startTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0),
+      endTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 30),
+      resourceName: "Jugendraum",
+      bookingDate: today
+    });
+
+    // Sample birthdays this week
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    
+    await this.createBirthday({
+      name: "Anna Müller",
+      birthDate: new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 2),
+      avatarUrl: null
+    });
+
+    await this.createBirthday({
+      name: "Peter Schmidt",
+      birthDate: new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 5),
+      avatarUrl: null
+    });
+
+    // Current verse of the week
+    await this.createVerseOfWeek({
+      text: "Jesus redete zu ihnen und sprach: Ich bin das Licht der Welt. Wer mir nachfolgt, wird nicht in der Finsternis wandeln, sondern das Licht des Lebens haben.",
+      reference: "Johannes 8:12", 
+      weekStart: weekStart
+    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
