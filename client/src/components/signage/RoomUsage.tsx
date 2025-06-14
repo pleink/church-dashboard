@@ -78,7 +78,9 @@ export function RoomUsage() {
         </div>
       </div>
 
-      {/* Upcoming bookings section */}
+        <div className="border-b-2 border-gray-1000 mb-12" />
+
+        {/* Upcoming bookings section */}
       <div>
         <h3 className="text-2xl-custom font-medium text-gray-700 mb-4 flex items-center">
           <Calendar className="text-church-yellow mr-3" size={24} />
