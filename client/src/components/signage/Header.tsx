@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logoPath from "@assets/Group 3_1749912859187.png";
+import logoPath from "@assets/fkw_logo.svg";
 
 export function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -34,10 +34,6 @@ export function Header() {
             alt="Freie Kirche Wipkingen Logo" 
             className="h-24 w-auto object-contain"
           />
-          <div>
-            <h1 className="text-4xl-custom font-bold text-church-blue">Freie Kirche</h1>
-            <p className="text-2xl-custom text-gray-600 -mt-2">Wipkingen</p>
-          </div>
         </div>
       </div>
       
