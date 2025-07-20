@@ -35,6 +35,7 @@ export class ChurchToolsService {
   private config: ChurchToolsConfig;
 
   constructor() {
+      console.log("getting envs in service")
     this.config = {
       baseUrl: process.env.CHURCHTOOLS_API_BASE || 'https://your-church.church.tools/api',
       apiToken: process.env.CHURCHTOOLS_API_TOKEN || process.env.API_TOKEN || ''
@@ -76,6 +77,8 @@ export class ChurchToolsService {
     }
   }
 
+  async getUpcoming
+
   async getTodayBookings(): Promise<ChurchToolsBooking[]> {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -97,7 +100,7 @@ export class ChurchToolsService {
 
       const startDate = weekStart.toISOString().split('T')[0];
       const endDate = weekEnd.toISOString().split('T')[0];
-      
+
       const persons = await this.makeRequest<ChurchToolsPerson[]>(`/persons?birthday_from=${startDate}&birthday_to=${endDate}`);
       return persons || [];
     } catch (error) {
@@ -121,6 +124,14 @@ export class ChurchToolsService {
     const birthdays = await this.getBirthdaysThisWeek();
     console.log(`Synced ${birthdays.length} birthdays from ChurchTools`);
   }
+
 }
 
-export const churchToolsService = new ChurchToolsService();
+let instance: ChurchToolsService | null = null;
+
+export function getChurchToolsService(): ChurchToolsService {
+    if (!instance) {
+    instance = new ChurchToolsService();
+  }
+  return instance;
+}
