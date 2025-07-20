@@ -40,6 +40,12 @@ interface VerseOfWeek {
   reference: string;
 }
 
+interface Flyer {
+  id: number;
+  imageUrl: string;
+  title: string;
+}
+
 interface ApiStatus {
   connected: boolean;
   lastUpdate: string;
@@ -84,6 +90,14 @@ export function useVerseOfWeek() {
     queryKey: ["/api/signage/verse"],
     refetchInterval: 60 * 60 * 1000, // 1 hour
     staleTime: 30 * 60 * 1000, // 30 minutes
+  });
+}
+
+export function useFlyers() {
+  return useQuery<Flyer[]>({
+    queryKey: ["/api/signage/flyers"],
+    refetchInterval: 15 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
   });
 }
 
