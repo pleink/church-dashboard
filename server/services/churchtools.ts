@@ -1,35 +1,13 @@
+import type { components } from "@shared/churchtools-api";
+
 interface ChurchToolsConfig {
   baseUrl: string;
   apiToken: string;
 }
 
-interface ChurchToolsEvent {
-  id: number;
-  name: string;
-  description?: string;
-  startdate: string;
-  enddate: string;
-  image?: string;
-  location?: string;
-}
-
-interface ChurchToolsBooking {
-  id: number;
-  caption: string;
-  startdate: string;
-  enddate: string;
-  resource: {
-    name: string;
-  };
-}
-
-interface ChurchToolsPerson {
-  id: number;
-  firstName: string;
-  lastName: string;
-  birthdate?: string;
-  imageUrl?: string;
-}
+type ChurchToolsEvent = components["schemas"]["Event"];
+type ChurchToolsBooking = components["schemas"]["Booking"];
+type ChurchToolsPerson = components["schemas"]["Person"];
 
 export class ChurchToolsService {
   private config: ChurchToolsConfig;
