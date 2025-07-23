@@ -77,8 +77,6 @@ export class ChurchToolsService {
     }
   }
 
-  async getUpcoming
-
   async getTodayBookings(): Promise<ChurchToolsBooking[]> {
     try {
       const today = new Date().toISOString().split('T')[0];
