@@ -109,6 +109,15 @@ Changelog:
   • Reduced height of bible verse section (smaller text, compact spacing)
   • Added church logo integration from provided assets
   • Enhanced room bookings with date information for better context
+- July 23, 2025. Major API integration upgrade:
+  • Migrated from Replit Agent to standard Replit environment
+  • Replaced mock data with real ChurchTools API integration
+  • Generated TypeScript types from ChurchTools OpenAPI specification
+  • Removed all fallback and mock data logic from server routes
+  • Updated ChurchTools service to use authentic API endpoints only
+  • Fixed API parameter formatting for proper ChurchTools communication
+  • Added real environment variables for ChurchTools API authentication
+  • Implemented proper error handling for API failures (no fallbacks)
 ```
 
 ## User Preferences

@@ -14,56 +14,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             if (churchToolsEvents.length > 0) {
                 const event = churchToolsEvents[0];
+                const startDate = event.startDate || '';
+                const endDate = event.endDate || '';
+                
                 const formattedEvent = {
                     id: event.id,
-                    title: event.name,
-                    description: event.description,
-                    date: new Date(event.startdate).toLocaleDateString('de-DE', {
+                    title: event.name || 'Veranstaltung',
+                    description: event.description || '',
+                    date: startDate ? new Date(startDate).toLocaleDateString('de-DE', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric'
-                    }),
-                    time: `${new Date(event.startdate).toLocaleTimeString('de-DE', {
+                    }) : '',
+                    time: startDate && endDate ? `${new Date(startDate).toLocaleTimeString('de-DE', {
                         hour: '2-digit',
                         minute: '2-digit'
-                    })}–${new Date(event.enddate).toLocaleTimeString('de-DE', {
+                    })}–${new Date(endDate).toLocaleTimeString('de-DE', {
                         hour: '2-digit',
                         minute: '2-digit'
-                    })}`,
-                    imageUrl: event.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
-                    location: event.location
+                    })}` : '',
+                    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
+                    location: ''
                 };
 
                 res.json(formattedEvent);
             } else {
-                // Fallback to stored events
-                const events = await storage.getUpcomingEvents(1);
-                if (events.length > 0) {
-                    const event = events[0];
-                    const formattedEvent = {
-                        id: event.id,
-                        title: event.title,
-                        description: event.description,
-                        date: new Date(event.startDate).toLocaleDateString('de-DE', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        }),
-                        time: `${new Date(event.startDate).toLocaleTimeString('de-DE', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}–${new Date(event.endDate).toLocaleTimeString('de-DE', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}`,
-                        imageUrl: event.imageUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
-                        location: event.location
-                    };
-
-                    res.json(formattedEvent);
-                } else {
-                    res.status(404).json({message: "Keine bevorstehenden Veranstaltungen gefunden"});
-                }
+                res.status(404).json({message: "Keine bevorstehenden Veranstaltungen gefunden"});
             }
         } catch (error) {
             console.error("Error fetching events:", error);
@@ -78,38 +54,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             if (churchToolsBookings.length > 0) {
                 const formattedBookings = churchToolsBookings.map(booking => ({
-                    id: booking.id,
-                    title: booking.caption,
-                    startTime: new Date(booking.startdate).toLocaleTimeString('de-DE', {
+                    id: booking.base?.id || 0,
+                    title: booking.base?.caption || 'Buchung',
+                    startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
                         hour: '2-digit',
                         minute: '2-digit'
-                    }),
-                    endTime: new Date(booking.enddate).toLocaleTimeString('de-DE', {
+                    }) : '',
+                    endTime: booking.base?.endDate ? new Date(booking.base.endDate).toLocaleTimeString('de-DE', {
                         hour: '2-digit',
                         minute: '2-digit'
-                    }),
-                    resource: booking.resource.name
+                    }) : '',
+                    resource: 'Raum'
                 }));
 
                 res.json(formattedBookings);
             } else {
-                // Fallback to stored today's bookings
-                const bookings = await storage.getTodayRoomBookings();
-                const formattedBookings = bookings.map(booking => ({
-                    id: booking.id,
-                    title: booking.title,
-                    startTime: new Date(booking.startTime).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }),
-                    endTime: new Date(booking.endTime).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }),
-                    resource: booking.resourceName
-                }));
-
-                res.json(formattedBookings);
+                res.json([]);
             }
         } catch (error) {
             console.error("Error fetching today's bookings:", error);
@@ -119,36 +79,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     app.get("/api/signage/bookings/upcoming", async (req, res) => {
         try {
-            // For upcoming bookings, use stored data (starts from tomorrow)
-            const bookings = await storage.getUpcomingRoomBookings(7);
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(0, 0, 0, 0);
+            // Get upcoming bookings from ChurchTools
+            const churchToolsBookings = await churchToolsService.getUpcomingBookings(7);
 
-            const upcomingBookings = bookings.filter(booking =>
-                new Date(booking.startTime) >= tomorrow
-            ).slice(0, 5); // Limit to 5 upcoming bookings
+            if (churchToolsBookings.length > 0) {
+                const formattedBookings = churchToolsBookings.map(booking => ({
+                    id: booking.base?.id || 0,
+                    title: booking.base?.caption || 'Buchung',
+                    startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : '',
+                    endTime: booking.base?.endDate ? new Date(booking.base.endDate).toLocaleTimeString('de-DE', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) : '',
+                    date: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleDateString('de-DE', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                    }) : '',
+                    resource: 'Raum'
+                }));
 
-            const formattedBookings = upcomingBookings.map(booking => ({
-                id: booking.id,
-                title: booking.title,
-                startTime: new Date(booking.startTime).toLocaleTimeString('de-DE', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }),
-                endTime: new Date(booking.endTime).toLocaleTimeString('de-DE', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }),
-                date: new Date(booking.startTime).toLocaleDateString('de-DE', {
-                    weekday: 'short',
-                    day: 'numeric',
-                    month: 'short'
-                }),
-                resource: booking.resourceName
-            }));
-
-            res.json(formattedBookings);
+                res.json(formattedBookings);
+            } else {
+                res.json([]);
+            }
         } catch (error) {
             console.error("Error fetching upcoming bookings:", error);
             res.status(500).json({message: "Fehler beim Laden der anstehenden Raumbelegungen"});
@@ -161,33 +118,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const churchToolsBirthdays = await churchToolsService.getBirthdaysThisWeek();
 
             if (churchToolsBirthdays.length > 0) {
-                const formattedBirthdays = churchToolsBirthdays.map(person => ({
-                    id: person.id,
-                    name: `${person.firstName} ${person.lastName}`,
-                    birthdayText: person.birthdate ? new Date(person.birthdate).toLocaleDateString('de-DE', {
+                const formattedBirthdays = churchToolsBirthdays.map(birthday => ({
+                    id: birthday.person?.domainIdentifier || birthday.date,
+                    name: birthday.person ? `${birthday.person.domainAttributes.firstName} ${birthday.person.domainAttributes.lastName}` : 'Unbekannt',
+                    birthdayText: birthday.date ? new Date(birthday.date).toLocaleDateString('de-DE', {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long'
                     }) : '',
-                    avatar: person.imageUrl
+                    avatar: birthday.person?.imageUrl || ''
                 }));
 
                 res.json(formattedBirthdays);
             } else {
-                // Fallback to stored birthdays
-                const birthdays = await storage.getWeeklyBirthdays();
-                const formattedBirthdays = birthdays.map(birthday => ({
-                    id: birthday.id,
-                    name: birthday.name,
-                    birthdayText: new Date(birthday.birthDate).toLocaleDateString('de-DE', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long'
-                    }),
-                    avatar: birthday.avatarUrl
-                }));
-
-                res.json(formattedBirthdays);
+                res.json([]);
             }
         } catch (error) {
             console.error("Error fetching birthdays:", error);
@@ -221,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.get("/api/signage/flyers", async (req, res) => {
         try {
             const flyers = await storage.getFlyers();
-            const formattedFlyers = flyers.map(flyer => ({
+            const formattedFlyers = (flyers || []).map(flyer => ({
                 id: flyer.id,
                 imageUrl: flyer.imageUrl,
                 title: flyer.description
@@ -254,29 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
     });
 
-    // Sync endpoint for manual data refresh
-    app.post("/api/signage/sync", async (req, res) => {
-        try {
-            await Promise.all([
-                churchToolsService.syncEvents(),
-                churchToolsService.syncBookings(),
-                churchToolsService.syncBirthdays()
-            ]);
 
-            res.json({
-                success: true,
-                message: "Daten erfolgreich synchronisiert",
-                timestamp: new Date().toISOString()
-            });
-        } catch (error) {
-            console.error("Sync error:", error);
-            res.status(500).json({
-                success: false,
-                message: "Fehler bei der Synchronisation",
-                error: error instanceof Error ? error.message : 'Unknown error'
-            });
-        }
-    });
 
     const httpServer = createServer(app);
     return httpServer;
