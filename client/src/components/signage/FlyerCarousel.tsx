@@ -79,17 +79,17 @@ export function FlyerCarousel() {
     }
 
     return (
-        <section className="col-span-12 section-card p-6 w-full">
+        <section className="col-span-12 section-card p-8 w-full">
             <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                 <Image className="text-church-yellow mr-4" size={32} />
                 FLYER DER WOCHE
             </h2>
             
-            <div className="relative w-full">
+            <div className="relative w-full mx-[-2px]">
                 <Slider {...settings}>
                     {activeFlyers.map((flyer) => (
-                        <div key={flyer.churchToolsId || flyer.id} className="w-full px-0">
-                            <div className="relative bg-white rounded-xl shadow-lg overflow-hidden" style={{ height: '500px' }}>
+                        <div key={flyer.churchToolsId || flyer.id} className="w-full px-2">
+                            <div className="relative bg-white rounded-xl overflow-hidden" style={{ height: '500px' }}>
                                 <img
                                     src={flyer.imageUrl}
                                     alt={flyer.title}
