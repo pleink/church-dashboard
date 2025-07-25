@@ -24,7 +24,9 @@ export function FlyerCarousel() {
         autoplay: activeFlyers.length > 1,
         autoplaySpeed: 7000, // 7 seconds as specified
         arrows: false,
-        fade: true,
+        fade: false, // Disable fade to fix positioning issues
+        cssEase: 'ease-in-out',
+        swipe: false,
         beforeChange: (oldIndex: number, newIndex: number) => setCurrentSlide(newIndex),
     };
 
@@ -86,12 +88,12 @@ export function FlyerCarousel() {
             <div className="relative w-full">
                 <Slider {...settings}>
                     {activeFlyers.map((flyer) => (
-                        <div key={flyer.churchToolsId || flyer.id} className="w-full">
-                            <div className="relative bg-white rounded-xl shadow-lg overflow-hidden w-full">
+                        <div key={flyer.churchToolsId || flyer.id} className="w-full px-0">
+                            <div className="relative bg-white rounded-xl shadow-lg overflow-hidden" style={{ height: '500px' }}>
                                 <img
                                     src={flyer.imageUrl}
                                     alt={flyer.title}
-                                    className="w-full h-[500px] object-contain"
+                                    className="w-full h-full object-cover"
                                     onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.style.display = 'none';
