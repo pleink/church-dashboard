@@ -1,8 +1,20 @@
 import type { paths, operations } from "../../shared/churchtools-api.js";
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 interface ChurchToolsConfig {
   baseUrl: string;
   apiToken: string;
+}
+
+interface AppConfig {
+  publicCalendars: number[];
+  signage: {
+    refreshInterval: number;
+    maxUpcomingDays: number;
+    maxEventsDisplay: number;
+    carouselInterval: number;
+  };
 }
 
 // Extract types from OpenAPI spec
@@ -14,12 +26,15 @@ type GetResourcesResponse =
   operations["get-resources"]["responses"]["200"]["content"]["application/json"];
 type GetPersonsResponse =
   operations["get-persons-birthdays"]["responses"]["200"]["content"]["application/json"];
+type GetCalendarAppointmentsResponse =
+  operations["get-calendars-calendarId-appointments"]["responses"]["200"]["content"]["application/json"];
 
 // Define simplified types for our usage
 type ChurchToolsEvent = NonNullable<GetEventsResponse["data"]>[number];
 type ChurchToolsBooking = NonNullable<GetBookingsResponse["data"]>[number];
 type ChurchToolsResource = NonNullable<GetResourcesResponse["data"]>[number];
 type ChurchToolsPerson = NonNullable<GetPersonsResponse["data"]>[number];
+type ChurchToolsAppointment = NonNullable<GetCalendarAppointmentsResponse["data"]>[number];
 
 interface ChurchToolsApiResponse<T> {
   data: T;
@@ -27,6 +42,7 @@ interface ChurchToolsApiResponse<T> {
 
 export class ChurchToolsService {
   private config: ChurchToolsConfig;
+  private appConfig: AppConfig;
 
   constructor() {
     console.log("getting envs in service");
@@ -37,6 +53,24 @@ export class ChurchToolsService {
       apiToken:
         process.env.CHURCHTOOLS_API_TOKEN || process.env.API_TOKEN || "",
     };
+
+    // Load app configuration
+    try {
+      const configPath = join(process.cwd(), 'config.json');
+      const configFile = readFileSync(configPath, 'utf8');
+      this.appConfig = JSON.parse(configFile);
+    } catch (error) {
+      console.warn("Could not load config.json, using defaults");
+      this.appConfig = {
+        publicCalendars: [2, 22, 25],
+        signage: {
+          refreshInterval: 15,
+          maxUpcomingDays: 7,
+          maxEventsDisplay: 8,
+          carouselInterval: 7
+        }
+      };
+    }
 
     if (!this.config.apiToken) {
       console.warn(
@@ -92,6 +126,88 @@ export class ChurchToolsService {
       console.error("Error fetching events from ChurchTools:", error);
       return [];
     }
+  }
+
+  async getCalendarAppointments(calendarId: number, days = 7): Promise<ChurchToolsAppointment[]> {
+    try {
+      const today = new Date();
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + days);
+
+      const appointments = await this.makeRequest<ChurchToolsAppointment[]>(
+        `/calendars/${calendarId}/appointments`,
+        {
+          from: today.toISOString().split("T")[0],
+          to: endDate.toISOString().split("T")[0],
+          'include[]': 'event,bookings' // Include related data
+        }
+      );
+      return appointments || [];
+    } catch (error) {
+      console.error(`Error fetching appointments for calendar ${calendarId}:`, error);
+      return [];
+    }
+  }
+
+  async getTodayAppointments(): Promise<ChurchToolsAppointment[]> {
+    try {
+      const allAppointments: ChurchToolsAppointment[] = [];
+      
+      // Get appointments from all configured calendars (both public and private)
+      const allCalendarIds = this.appConfig.publicCalendars; // We can extend this later
+      
+      for (const calendarId of allCalendarIds) {
+        const appointments = await this.getCalendarAppointments(calendarId, 1); // Today only
+        allAppointments.push(...appointments);
+      }
+      
+      // Filter to today only and sort by start time
+      const today = new Date().toISOString().split("T")[0];
+      return allAppointments
+        .filter(appointment => appointment.base?.startDate?.startsWith(today))
+        .sort((a, b) => {
+          const aTime = a.base?.startDate || '';
+          const bTime = b.base?.startDate || '';
+          return aTime.localeCompare(bTime);
+        });
+    } catch (error) {
+      console.error("Error fetching today's appointments:", error);
+      return [];
+    }
+  }
+
+  async getUpcomingAppointments(days = 7): Promise<ChurchToolsAppointment[]> {
+    try {
+      const allAppointments: ChurchToolsAppointment[] = [];
+      
+      // Get appointments from all configured calendars (both public and private)
+      const allCalendarIds = this.appConfig.publicCalendars; // We can extend this later
+      
+      for (const calendarId of allCalendarIds) {
+        const appointments = await this.getCalendarAppointments(calendarId, days);
+        allAppointments.push(...appointments);
+      }
+      
+      // Filter to future dates and sort chronologically
+      const today = new Date().toISOString().split("T")[0];
+      return allAppointments
+        .filter(appointment => {
+          const appointmentDate = appointment.base?.startDate?.split("T")[0];
+          return appointmentDate && appointmentDate > today;
+        })
+        .sort((a, b) => {
+          const aTime = a.base?.startDate || '';
+          const bTime = b.base?.startDate || '';
+          return aTime.localeCompare(bTime);
+        });
+    } catch (error) {
+      console.error("Error fetching upcoming appointments:", error);
+      return [];
+    }
+  }
+
+  isPublicCalendar(calendarId: number): boolean {
+    return this.appConfig.publicCalendars.includes(calendarId);
   }
 
   async getTodayBookings(): Promise<ChurchToolsBooking[]> {
@@ -179,7 +295,7 @@ export class ChurchToolsService {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - now.getDay());
       const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 100);
+      weekEnd.setDate(weekStart.getDate() + 7);
 
       const startDate = weekStart.toISOString().split("T")[0];
       const endDate = weekEnd.toISOString().split("T")[0];

@@ -1,0 +1,9 @@
+{
+  "publicCalendars": [2, 22, 25],
+  "signage": {
+    "refreshInterval": 15,
+    "maxUpcomingDays": 7,
+    "maxEventsDisplay": 8,
+    "carouselInterval": 7
+  }
+}
