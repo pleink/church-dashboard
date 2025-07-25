@@ -40,7 +40,7 @@ The application is built as a modern web application that can run continuously o
 2. **Room Usage**: Today's room bookings and resource usage
 3. **Upcoming Events**: Next church event with image and details
 4. **Birthdays**: Weekly birthday celebrations (up to 4 people)
-5. **Verse of Week**: Biblical verse display with formatting
+5. **Tagesvers**: Daily biblical verse display with formatting
 6. **API Status**: Connection status indicator for ChurchTools
 
 ### Database Schema
@@ -48,7 +48,7 @@ The application is built as a modern web application that can run continuously o
 - **Events**: Church events with dates, descriptions, and images
 - **Room Bookings**: Resource scheduling with times and locations
 - **Birthdays**: Member birthdays with optional avatars
-- **Verse of Week**: Weekly bible verses with references
+- **Tagesvers**: Daily bible verses with references
 
 ## Data Flow
 
@@ -66,6 +66,16 @@ The application is built as a modern web application that can run continuously o
 - **Authentication**: Token-based API authentication
 - **Endpoints Used**: Events, bookings, and potentially person data
 - **Error Handling**: Comprehensive fallback mechanisms
+
+### Devotionalium Integration
+- **API URL**: https://devotionalium.com/api/v2
+- **Configuration**: Bible translation settings in config.json
+- **Available Bible Translations**: 
+  - German: lut (Luther 1912), elb (Elberfelder 1905), sch (Schlachter 1951), vol (Volxbibel 3.0)
+  - English: kjv (King James 2000), web (World English Bible), rsv (Revised Standard Version)
+  - French: seg (Bible Segond 1880)
+- **Available Languages**: de-de (German), en-us (English), fr (French)
+- **Features**: Daily verses with Tanakh, Bible, and Quran options
 
 ### Database Dependencies
 - **PostgreSQL**: Primary database (Neon serverless in production)
@@ -136,6 +146,8 @@ Changelog:
   • Fixed TypeScript error by installing @types/react-slick package
   • Enhanced flyer carousel to use full width layout (col-span-12)
   • Moved Bible translation settings to config.json for easy configuration
+  • Added comprehensive documentation of available Bible translations and languages
+  • Renamed "Vers der Woche" to "Tagesvers" for consistent project naming
 ```
 
 ## User Preferences
