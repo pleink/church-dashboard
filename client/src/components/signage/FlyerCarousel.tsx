@@ -32,7 +32,7 @@ export function FlyerCarousel() {
 
     if (isLoading) {
         return (
-            <section className="col-span-7 section-card p-6 w-full">
+            <section className="col-span-12 section-card p-6 w-full">
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                     <Image className="text-church-yellow mr-4" size={32} />
                     FLYER DER WOCHE
@@ -47,7 +47,7 @@ export function FlyerCarousel() {
 
     if (error) {
         return (
-            <section className="col-span-7 section-card p-6 w-full">
+            <section className="col-span-12 section-card p-6 w-full">
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                     <Image className="text-church-yellow mr-4" size={32} />
                     FLYER DER WOCHE
@@ -63,7 +63,7 @@ export function FlyerCarousel() {
 
     if (!activeFlyers || activeFlyers.length === 0) {
         return (
-            <section className="col-span-7 section-card p-6 w-full">
+            <section className="col-span-12 section-card p-6 w-full">
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                     <Image className="text-church-yellow mr-4" size={32} />
                     FLYER DER WOCHE
@@ -79,7 +79,7 @@ export function FlyerCarousel() {
     }
 
     return (
-        <section className="col-span-7 section-card p-6 w-full">
+        <section className="col-span-12 section-card p-6 w-full">
             <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                 <Image className="text-church-yellow mr-4" size={32} />
                 FLYER DER WOCHE
@@ -95,8 +95,12 @@ export function FlyerCarousel() {
                                     alt={flyer.title}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
+                                        console.error('Failed to load image:', flyer.imageUrl);
                                         const target = e.target as HTMLImageElement;
-                                        target.style.display = 'none';
+                                        target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5YTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkZseWVyIEJpbGQgbmljaHQgdmVyZsO8Z2JhcjwvdGV4dD4KICA8L3N2Zz4K';
+                                    }}
+                                    onLoad={() => {
+                                        console.log('Successfully loaded image:', flyer.imageUrl);
                                     }}
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
