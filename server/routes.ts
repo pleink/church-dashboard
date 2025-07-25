@@ -53,7 +53,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const churchToolsBookings = await churchToolsService.getTodayBookings();
 
             if (churchToolsBookings.length > 0) {
-                const formattedBookings = churchToolsBookings.map(booking => ({
+                // Group bookings by unique combination of title, start time, and end time to avoid duplicates
+                const uniqueBookings = new Map();
+                
+                churchToolsBookings.forEach(booking => {
+                    const key = `${booking.base?.caption}-${booking.base?.startDate}-${booking.base?.endDate}`;
+                    if (!uniqueBookings.has(key) || !booking.base?.caption) {
+                        uniqueBookings.set(key, booking);
+                    }
+                });
+
+                const formattedBookings = Array.from(uniqueBookings.values()).map(booking => ({
                     id: booking.base?.id || 0,
                     title: booking.base?.caption || 'Buchung',
                     startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
@@ -64,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         hour: '2-digit',
                         minute: '2-digit'
                     }) : '',
-                    resource: 'Raum'
+                    resource: booking.calculated?.resource?.name || booking.base?.resource?.name || 'Raum'
                 }));
 
                 res.json(formattedBookings);
@@ -83,7 +93,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const churchToolsBookings = await churchToolsService.getUpcomingBookings(7);
 
             if (churchToolsBookings.length > 0) {
-                const formattedBookings = churchToolsBookings.map(booking => ({
+                // Group bookings by unique combination of title, start time, and end time to avoid duplicates
+                const uniqueBookings = new Map();
+                
+                churchToolsBookings.forEach(booking => {
+                    const key = `${booking.base?.caption}-${booking.base?.startDate}-${booking.base?.endDate}`;
+                    if (!uniqueBookings.has(key) || !booking.base?.caption) {
+                        uniqueBookings.set(key, booking);
+                    }
+                });
+
+                const formattedBookings = Array.from(uniqueBookings.values()).map(booking => ({
                     id: booking.base?.id || 0,
                     title: booking.base?.caption || 'Buchung',
                     startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
@@ -99,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         day: 'numeric',
                         month: 'short'
                     }) : '',
-                    resource: 'Raum'
+                    resource: booking.calculated?.resource?.name || booking.base?.resource?.name || 'Raum'
                 }));
 
                 res.json(formattedBookings);
