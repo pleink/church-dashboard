@@ -178,24 +178,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     app.get("/api/signage/verse", async (req, res) => {
         try {
-            const verse = await storage.getCurrentVerseOfWeek();
-            if (verse) {
+            // Fetch daily verse from Devotionalium API with Luther translation
+            const response = await fetch('https://devotionalium.com/api/v2?lang=de-de&bibleVersion=lut');
+            
+            if (!response.ok) {
+                throw new Error(`Devotionalium API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Get the Bible verse (collection 1 = New Testament)
+            const bibleVerse = data['1'];
+            
+            if (bibleVerse && bibleVerse.text) {
                 res.json({
-                    id: verse.id,
-                    text: verse.text,
-                    reference: verse.reference
+                    id: 1,
+                    text: bibleVerse.text,
+                    reference: bibleVerse.reference,
+                    source: 'Devotionalium',
+                    date: data.date
                 });
             } else {
-                // Default verse if none found
+                // Fallback to default verse if API doesn't return Bible verse
                 res.json({
                     id: 0,
                     text: "Jesus redete zu ihnen und sprach: Ich bin das Licht der Welt. Wer mir nachfolgt, wird nicht in der Finsternis wandeln, sondern das Licht des Lebens haben.",
-                    reference: "Johannes 8:12"
+                    reference: "Johannes 8:12",
+                    source: 'Fallback'
                 });
             }
         } catch (error) {
-            console.error("Error fetching verse:", error);
-            res.status(500).json({message: "Fehler beim Laden des Bibelverses"});
+            console.error("Error fetching verse from Devotionalium:", error);
+            
+            // Fallback to default verse on error
+            res.json({
+                id: 0,
+                text: "Jesus redete zu ihnen und sprach: Ich bin das Licht der Welt. Wer mir nachfolgt, wird nicht in der Finsternis wandeln, sondern das Licht des Lebens haben.",
+                reference: "Johannes 8:12",
+                source: 'Fallback'
+            });
         }
     });
 

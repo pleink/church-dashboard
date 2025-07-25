@@ -128,6 +128,13 @@ Changelog:
   • Fixed birthday data mapping to use correct ChurchTools person API structure
   • Updated flyer carousel to use appointment images from public calendars
   • Maintained church branding and 4K signage display styling throughout
+- July 25, 2025. Devotionalium API Integration for Bible Verses:
+  • Replaced mock bible verse system with authentic Devotionalium API
+  • Configured Luther translation (lut) for German daily bible verses
+  • Added proper error handling with fallback to ensure system stability
+  • API fetches fresh daily verses automatically from devotionalium.com/api/v2
+  • Fixed TypeScript error by installing @types/react-slick package
+  • Enhanced flyer carousel to use full width layout (col-span-12)
 ```
 
 ## User Preferences
