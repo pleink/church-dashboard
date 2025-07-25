@@ -184,16 +184,17 @@ export class ChurchToolsService {
       const allCalendarIds = this.appConfig.publicCalendars; // We can extend this later
       
       for (const calendarId of allCalendarIds) {
-        const appointments = await this.getCalendarAppointments(calendarId, days);
+        const appointments = await this.getCalendarAppointments(calendarId, 30); // Extended to 30 days to catch August appointments
         allAppointments.push(...appointments);
       }
       
-      // Filter to future dates and sort chronologically
-      const today = new Date().toISOString().split("T")[0];
+      // TEMPORARY: Mock date to August 15, 2025 for testing flyers
+      const mockToday = "2025-08-15";
+      
       return allAppointments
         .filter(appointment => {
           const appointmentDate = appointment.base?.startDate?.split("T")[0];
-          return appointmentDate && appointmentDate > today;
+          return appointmentDate && appointmentDate > mockToday;
         })
         .sort((a, b) => {
           const aTime = a.base?.startDate || '';

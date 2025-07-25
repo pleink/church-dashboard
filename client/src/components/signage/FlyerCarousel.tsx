@@ -30,8 +30,8 @@ export function FlyerCarousel() {
 
     if (isLoading) {
         return (
-            <section className="col-span-7 section-card p-12">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
+            <section className="col-span-7 section-card p-6 w-full">
+                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                     <Image className="text-church-yellow mr-4" size={32} />
                     FLYER DER WOCHE
                 </h2>
@@ -45,8 +45,8 @@ export function FlyerCarousel() {
 
     if (error) {
         return (
-            <section className="col-span-7 section-card p-12">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
+            <section className="col-span-7 section-card p-6 w-full">
+                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                     <Image className="text-church-yellow mr-4" size={32} />
                     FLYER DER WOCHE
                 </h2>
@@ -61,7 +61,7 @@ export function FlyerCarousel() {
 
     if (!activeFlyers || activeFlyers.length === 0) {
         return (
-            <section className="col-span-7 section-card p-8">
+            <section className="col-span-7 section-card p-6 w-full">
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                     <Image className="text-church-yellow mr-4" size={32} />
                     FLYER DER WOCHE
@@ -77,17 +77,17 @@ export function FlyerCarousel() {
     }
 
     return (
-        <section className="col-span-7 section-card p-8">
+        <section className="col-span-7 section-card p-6 w-full">
             <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                 <Image className="text-church-yellow mr-4" size={32} />
                 FLYER DER WOCHE
             </h2>
             
-            <div className="relative">
+            <div className="relative w-full">
                 <Slider {...settings}>
                     {activeFlyers.map((flyer) => (
-                        <div key={flyer.churchToolsId || flyer.id} className="px-2">
-                            <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div key={flyer.churchToolsId || flyer.id} className="w-full">
+                            <div className="relative bg-white rounded-xl shadow-lg overflow-hidden w-full">
                                 <img
                                     src={flyer.imageUrl}
                                     alt={flyer.title}
