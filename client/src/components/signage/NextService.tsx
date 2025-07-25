@@ -51,9 +51,6 @@ export default function NextService() {
             )}
             
             <div className="space-y-4">
-                <h3 className="text-2xl-custom font-bold text-church-blue">
-                    {event.title}
-                </h3>
                 <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
                     <Calendar className="text-church-yellow" size={20} />
                     <span>{event.date}</span>
