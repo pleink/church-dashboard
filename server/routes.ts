@@ -155,10 +155,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             if (churchToolsBirthdays.length > 0) {
                 const formattedBirthdays = churchToolsBirthdays.map((birthday: any) => ({
-                    id: birthday.person?.domainIdentifier || birthday.date,
-                    churchToolsId: birthday.person?.domainIdentifier || birthday.date,
+                    id: birthday.person?.domainIdentifier || birthday.id,
+                    churchToolsId: birthday.person?.domainIdentifier || birthday.id,
                     name: birthday.person ? `${birthday.person.domainAttributes.firstName} ${birthday.person.domainAttributes.lastName}` : 'Unbekannt',
-                    birthdayText: birthday.date ? new Date(birthday.date).toLocaleDateString('de-DE', {
+                    birthdayText: birthday.anniversary ? new Date(birthday.anniversary).toLocaleDateString('de-DE', {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long'

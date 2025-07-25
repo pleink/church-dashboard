@@ -291,20 +291,12 @@ export class ChurchToolsService {
 
   async getBirthdaysThisWeek(): Promise<ChurchToolsPerson[]> {
     try {
-      const now = new Date();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay());
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 7);
-
-      const startDate = weekStart.toISOString().split("T")[0];
-      const endDate = weekEnd.toISOString().split("T")[0];
-
-      const persons = await this.makeRequest<ChurchToolsPerson[]>("/persons", {
-        birthday_from: startDate,
-        birthday_to: endDate,
+      // Use the dedicated birthdays endpoint which provides structured birthday data
+      const birthdays = await this.makeRequest<any[]>("/persons/birthdays", {
+        from_days_ago: "0",
+        to_days_ahead: "7",
       });
-      return persons || [];
+      return birthdays || [];
     } catch (error) {
       console.error("Error fetching birthdays from ChurchTools:", error);
       return [];
