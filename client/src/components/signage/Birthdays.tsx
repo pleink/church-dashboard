@@ -45,7 +45,7 @@ export function Birthdays() {
       <div className="grid grid-cols-2 gap-6">
         {birthdays && birthdays.length > 0 ? (
           birthdays.slice(0, 4).map((person) => (
-            <div key={person.id} className="flex items-center space-x-4">
+            <div key={person.churchToolsId || person.id} className="flex items-center space-x-4">
               <div className="w-16 h-16 avatar-placeholder rounded-full flex items-center justify-center">
                 {person.avatar ? (
                   <img 

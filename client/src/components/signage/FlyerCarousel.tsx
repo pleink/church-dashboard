@@ -58,7 +58,7 @@ export function FlyerCarousel() {
                         {
                             flyers.map((flyer) => (
                                 flyer.imageUrl ? (
-                                    <div key={flyer.id} className="px-4">
+                                    <div key={flyer.churchToolsId || flyer.id} className="px-4">
                                         <img
                                             src={flyer.imageUrl}
                                             alt={flyer.title}
@@ -66,7 +66,7 @@ export function FlyerCarousel() {
                                         />
                                     </div>
                                 ) : (
-                                    <div key={flyer.id} className="px-4">
+                                    <div key={flyer.churchToolsId || flyer.id} className="px-4">
                                         <p className="text-xl-custom text-gray-500">
                                             Kein Bild verfügbar.
                                         </p>

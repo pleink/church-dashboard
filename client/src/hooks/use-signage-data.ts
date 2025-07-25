@@ -10,25 +10,34 @@ interface SignageEvent {
   location?: string;
 }
 
-interface TodayRoomBooking {
+interface TodayAppointment {
   id: number;
-  title: string;
-  startTime: string;
-  endTime: string;
-  resource: string;
-}
-
-interface UpcomingRoomBooking {
-  id: number;
+  churchToolsId: number;
   title: string;
   startTime: string;
   endTime: string;
   date: string;
   resource: string;
+  isPublic: boolean;
+  calendarId: number;
+}
+
+interface UpcomingAppointment {
+  id: number;
+  churchToolsId: number;
+  title: string;
+  startTime: string;
+  endTime: string;
+  date: string;
+  resource: string;
+  isPublic: boolean;
+  calendarId: number;
+  imageUrl?: string;
 }
 
 interface Birthday {
   id: number;
+  churchToolsId: number;
   name: string;
   birthdayText: string;
   avatar?: string;
@@ -42,8 +51,10 @@ interface VerseOfWeek {
 
 interface Flyer {
   id: number;
+  churchToolsId: number;
   imageUrl: string;
   title: string;
+  startDate: string;
 }
 
 interface ApiStatus {
@@ -61,17 +72,17 @@ export function useSignageEvent() {
   });
 }
 
-export function useTodayRoomBookings() {
-  return useQuery<TodayRoomBooking[]>({
-    queryKey: ["/api/signage/bookings/today"],
+export function useTodayAppointments() {
+  return useQuery<TodayAppointment[]>({
+    queryKey: ["/api/signage/appointments/today"],
     refetchInterval: 15 * 60 * 1000,
     staleTime: 10 * 60 * 1000,
   });
 }
 
-export function useUpcomingRoomBookings() {
-  return useQuery<UpcomingRoomBooking[]>({
-    queryKey: ["/api/signage/bookings/upcoming"],
+export function useUpcomingAppointments() {
+  return useQuery<UpcomingAppointment[]>({
+    queryKey: ["/api/signage/appointments/upcoming"],
     refetchInterval: 15 * 60 * 1000,
     staleTime: 10 * 60 * 1000,
   });

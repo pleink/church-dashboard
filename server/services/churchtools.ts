@@ -139,7 +139,7 @@ export class ChurchToolsService {
         {
           from: today.toISOString().split("T")[0],
           to: endDate.toISOString().split("T")[0],
-          'include[]': 'event,bookings' // Include related data
+          'include[]': 'event' // Include related data
         }
       );
       return appointments || [];
