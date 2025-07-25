@@ -118,6 +118,16 @@ Changelog:
   • Fixed API parameter formatting for proper ChurchTools communication
   • Added real environment variables for ChurchTools API authentication
   • Implemented proper error handling for API failures (no fallbacks)
+- July 25, 2025. Calendar Appointment System Implementation:
+  • Replaced room booking system with calendar appointments using /calendars/{calendarId}/appointments endpoint
+  • Created centralized config.json with public calendar IDs [2, 22, 25] and signage settings
+  • Implemented public/private calendar filtering logic in ChurchTools service
+  • Updated API routes: /api/signage/appointments/today and /api/signage/appointments/upcoming
+  • Renamed components: RoomUsage → NextEvents, UpcomingEvent → NextService
+  • Added churchToolsId fields to all API responses for better tracking
+  • Fixed birthday data mapping to use correct ChurchTools person API structure
+  • Updated flyer carousel to use appointment images from public calendars
+  • Maintained church branding and 4K signage display styling throughout
 ```
 
 ## User Preferences
