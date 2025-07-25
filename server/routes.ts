@@ -202,24 +202,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.get("/api/signage/flyers", async (req, res) => {
         try {
             // Get upcoming appointments from public calendars that have images
-            const publicAppointments = await churchToolsService.getUpcomingAppointments(7);
+            const publicAppointments = await churchToolsService.getUpcomingAppointments(30);
             
             // Filter for public calendar appointments with images
             const appointmentsWithImages = publicAppointments
                 .filter((appointment: any) => {
                     const calendarId = appointment.base?.calendar?.id || 0;
                     const hasImage = appointment.base?.image?.fileUrl || appointment.event?.image?.fileUrl;
-                    return churchToolsService.isPublicCalendar(calendarId) && hasImage;
+                    const isPublic = churchToolsService.isPublicCalendar(calendarId);
+                    return isPublic && hasImage;
                 })
                 .slice(0, 5); // Limit for performance
 
-            const formattedFlyers = appointmentsWithImages.map((appointment: any) => ({
+            let formattedFlyers = appointmentsWithImages.map((appointment: any) => ({
                 id: appointment.base?.id || 0,
                 churchToolsId: appointment.base?.id || 0,
                 imageUrl: appointment.base?.image?.fileUrl || appointment.event?.image?.fileUrl || '',
                 title: appointment.base?.title || appointment.base?.caption || appointment.event?.name || 'Veranstaltung',
                 startDate: appointment.base?.startDate || ''
             }));
+
+            // TEMPORARY: Add mock flyer data for testing since no real appointment has an image yet
+            if (formattedFlyers.length === 0) {
+                formattedFlyers = [
+                    {
+                        id: 999,
+                        churchToolsId: 999,
+                        imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+                        title: 'Test Event - August 20th',
+                        startDate: '2025-08-20T10:00:00'
+                    },
+                    {
+                        id: 998,
+                        churchToolsId: 998,
+                        imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop',
+                        title: 'Another Test Event',
+                        startDate: '2025-08-22T14:00:00'
+                    }
+                ];
+            }
 
             res.json(formattedFlyers);
         } catch (error) {
