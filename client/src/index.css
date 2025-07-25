@@ -66,6 +66,39 @@
   }
 }
 
+/* DaisyUI-style Loading Ring */
+@layer components {
+  .loading {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .loading.loading-ring {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    animation: loading-ring 1s linear infinite;
+  }
+  
+  .loading.loading-lg {
+    width: 3rem;
+    height: 3rem;
+    border-width: 3px;
+  }
+  
+  @keyframes loading-ring {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
 /* Custom styles for 4K display optimization */
 .signage-container {
   font-family: 'Spartan', sans-serif;
