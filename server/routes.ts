@@ -74,19 +74,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     }
                 });
 
-                const formattedBookings = Array.from(groupedBookings.values()).map(({ booking, rooms }) => ({
-                    id: booking.base?.id || 0,
-                    title: booking.base?.caption || 'Buchung',
-                    startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }) : '',
-                    endTime: booking.base?.endDate ? new Date(booking.base.endDate).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }) : '',
-                    resource: rooms.join(', ')
-                }));
+                const formattedBookings = Array.from(groupedBookings.values()).map(({ booking, rooms }) => {
+                    // Limit room display to avoid text wrapping
+                    let resourceText = rooms.join(', ');
+                    if (resourceText.length > 40) {
+                        const firstThreeRooms = rooms.slice(0, 3).join(', ');
+                        if (rooms.length > 3) {
+                            resourceText = `${firstThreeRooms} +${rooms.length - 3}`;
+                        } else {
+                            resourceText = firstThreeRooms;
+                        }
+                    }
+                    
+                    return {
+                        id: booking.base?.id || 0,
+                        title: booking.base?.caption || 'Buchung',
+                        startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : '',
+                        endTime: booking.base?.endDate ? new Date(booking.base.endDate).toLocaleTimeString('de-DE', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : '',
+                        resource: resourceText
+                    };
+                });
 
                 res.json(formattedBookings);
             } else {
@@ -127,24 +140,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     }
                 });
 
-                const formattedBookings = Array.from(groupedBookings.values()).map(({ booking, rooms }) => ({
-                    id: booking.base?.id || 0,
-                    title: booking.base?.caption || 'Buchung',
-                    startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }) : '',
-                    endTime: booking.base?.endDate ? new Date(booking.base.endDate).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    }) : '',
-                    date: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleDateString('de-DE', {
-                        weekday: 'short',
-                        day: 'numeric',
-                        month: 'short'
-                    }) : '',
-                    resource: rooms.join(', ')
-                }));
+                const formattedBookings = Array.from(groupedBookings.values()).map(({ booking, rooms }) => {
+                    // Limit room display to avoid text wrapping
+                    let resourceText = rooms.join(', ');
+                    if (resourceText.length > 40) {
+                        const firstThreeRooms = rooms.slice(0, 3).join(', ');
+                        if (rooms.length > 3) {
+                            resourceText = `${firstThreeRooms} +${rooms.length - 3}`;
+                        } else {
+                            resourceText = firstThreeRooms;
+                        }
+                    }
+                    
+                    return {
+                        id: booking.base?.id || 0,
+                        title: booking.base?.caption || 'Buchung',
+                        startTime: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleTimeString('de-DE', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : '',
+                        endTime: booking.base?.endDate ? new Date(booking.base.endDate).toLocaleTimeString('de-DE', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : '',
+                        date: booking.base?.startDate ? new Date(booking.base.startDate).toLocaleDateString('de-DE', {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'short'
+                        }) : '',
+                        resource: resourceText
+                    };
+                });
 
                 res.json(formattedBookings);
             } else {
