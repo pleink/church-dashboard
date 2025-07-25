@@ -122,13 +122,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const churchToolsBookings = await churchToolsService.getUpcomingBookings(7);
 
             if (churchToolsBookings.length > 0) {
-
+                // Sort bookings by date BEFORE grouping
+                const sortedBookings = churchToolsBookings.sort((a, b) => {
+                    const dateA = a.base?.startDate ? new Date(a.base.startDate) : new Date();
+                    const dateB = b.base?.startDate ? new Date(b.base.startDate) : new Date();
+                    return dateA.getTime() - dateB.getTime();
+                });
                 
                 // Group bookings by unique combination of title, start time, and end time
                 // but collect all room names for each event
                 const groupedBookings = new Map();
                 
-                churchToolsBookings.forEach(booking => {
+                sortedBookings.forEach(booking => {
                     const key = `${booking.base?.caption}-${booking.base?.startDate}-${booking.base?.endDate}`;
                     const roomName = booking.base?.resource?.name || 'Raum';
                     
@@ -174,13 +179,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
                             month: 'short'
                         }) : '',
                         resource: resourceText,
-                        startDate: booking.base?.startDate
+                        sortKey: booking.base?.startDate
                     };
                 }).sort((a, b) => {
-                    const dateA = a.startDate ? new Date(a.startDate) : new Date();
-                    const dateB = b.startDate ? new Date(b.startDate) : new Date();
-                    return dateA.getTime() - dateB.getTime();
-                }).map(({ startDate, ...booking }) => booking);
+                    if (!a.sortKey || !b.sortKey) return 0;
+                    return new Date(a.sortKey).getTime() - new Date(b.sortKey).getTime();
+                }).map(({ sortKey, ...booking }) => booking);
 
                 res.json(formattedBookings);
             } else {
