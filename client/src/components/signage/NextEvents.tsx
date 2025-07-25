@@ -34,7 +34,7 @@ export default function NextEvents() {
                 </h2>
                 <div className="text-center py-8">
                     <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-xl-custom text-gray-500">Keine Termine gefunden</p>
+                    <p className="text-xl-custom text-gray-500">Keine Veranstaltung gefunden</p>
                 </div>
             </section>
         );
