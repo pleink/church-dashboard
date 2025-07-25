@@ -13,11 +13,11 @@ export function RoomUsage() {
       <section className="col-span-7 section-card p-12">
         <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
           <Calendar className="text-church-yellow mr-4" size={32} />
-          RAUMBELEGUNGEN
+          NÄCHSTE VERANSTALTUNG
         </h2>
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-church-blue mx-auto"></div>
-          <p className="text-xl-custom text-gray-600 mt-4">Lade Raumbelegung...</p>
+          <p className="text-xl-custom text-gray-600 mt-4">Lade Veranstaltungen...</p>
         </div>
       </section>
     );
@@ -28,11 +28,11 @@ export function RoomUsage() {
       <section className="col-span-7 section-card p-12">
         <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
           <Calendar className="text-church-yellow mr-4" size={32} />
-          RAUMBELEGUNGEN
+          NÄCHSTE VERANSTALTUNG
         </h2>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
           <p className="text-xl-custom text-red-800">
-            Fehler beim Laden der Raumbelegung. ChurchTools möglicherweise nicht erreichbar.
+            Fehler beim Laden der Veranstaltungen. ChurchTools möglicherweise nicht erreichbar.
           </p>
         </div>
       </section>
@@ -43,7 +43,7 @@ export function RoomUsage() {
     <section className="col-span-7 section-card p-12">
       <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
         <Calendar className="text-church-yellow mr-4" size={32} />
-        RAUMBELEGUNGEN
+        NÄCHSTE VERANSTALTUNG
       </h2>
       
       {/* Today's bookings section */}
@@ -72,13 +72,15 @@ export function RoomUsage() {
             ))
           ) : (
             <p className="text-xl-custom text-gray-500 py-4">
-              Heute sind keine Räume gebucht.
+              Heute finden keine Veranstaltungen statt.
             </p>
           )}
         </div>
       </div>
 
-      {/* Upcoming bookings section */}
+        <div className="border-b-2 border-gray-1000 mb-12" />
+
+        {/* Upcoming bookings section */}
       <div>
         <h3 className="text-2xl-custom font-medium text-gray-700 mb-4 flex items-center">
           <Calendar className="text-church-yellow mr-3" size={24} />
@@ -86,10 +88,10 @@ export function RoomUsage() {
         </h3>
         <div className="space-y-3">
           {upcomingBookings && upcomingBookings.length > 0 ? (
-            upcomingBookings.slice(0, 8).map((booking) => (
+            upcomingBookings.slice(0, 5).map((booking) => (
               <div key={booking.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
                 <div className="flex items-center space-x-4">
-                  <div className="w-3 h-3 bg-church-blue rounded-full"></div>
+                  <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
                   <div>
                     <span className="text-xl-custom font-medium text-gray-800">
                       {booking.title}
@@ -98,10 +100,10 @@ export function RoomUsage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg text-gray-600 font-medium">
+                  <div className="text-xl-custom text-gray-600 font-medium">
                     {booking.startTime}–{booking.endTime}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-lg text-gray-500">
                     {booking.date}
                   </div>
                 </div>
@@ -109,7 +111,7 @@ export function RoomUsage() {
             ))
           ) : (
             <p className="text-xl-custom text-gray-500 py-4">
-              Keine anstehenden Raumbelegungen.
+              Keine anstehenden Veranstaltungen.
             </p>
           )}
         </div>
