@@ -2,7 +2,7 @@ import {Header} from "@/components/signage/Header";
 import NextEvents from "@/components/signage/NextEvents";
 import NextService from "@/components/signage/NextService";
 import {Birthdays} from "@/components/signage/Birthdays";
-import {VerseOfWeek} from "@/components/signage/VerseOfWeek";
+import {Tagesvers} from "@/components/signage/Tagesvers";
 import {ApiStatus} from "@/components/signage/ApiStatus";
 import {FlyerCarousel} from "@/components/signage/FlyerCarousel.tsx";
 
@@ -15,7 +15,7 @@ export default function Signage() {
                 <NextEvents/>
                 <NextService/>
                 <Birthdays/>
-                <VerseOfWeek/>
+                <Tagesvers/>
                 <FlyerCarousel/>
                 <ApiStatus/>
             </div>

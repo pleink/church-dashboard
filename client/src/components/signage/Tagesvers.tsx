@@ -1,8 +1,8 @@
 import { Book } from "lucide-react";
-import { useVerseOfWeek } from "@/hooks/use-signage-data";
+import { useVerseOfWeek as useTagesvers } from "@/hooks/use-signage-data";
 
-export function VerseOfWeek() {
-  const { data: verse, isLoading, error } = useVerseOfWeek();
+export function Tagesvers() {
+  const { data: verse, isLoading, error } = useTagesvers();
 
   if (isLoading) {
     return (
@@ -12,7 +12,7 @@ export function VerseOfWeek() {
           TAGESVERS
         </h2>
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
           <p className="text-xl-custom mt-4">Lade Bibelvers...</p>
         </div>
       </section>
