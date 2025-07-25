@@ -208,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const appointmentsWithImages = publicAppointments
                 .filter((appointment: any) => {
                     const calendarId = appointment.base?.calendar?.id || 0;
-                    const hasImage = appointment.base?.image?.fileUrl;
+                    const hasImage = appointment.base?.image?.fileUrl || appointment.event?.image?.fileUrl;
                     return churchToolsService.isPublicCalendar(calendarId) && hasImage;
                 })
                 .slice(0, 5); // Limit for performance
@@ -216,8 +216,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const formattedFlyers = appointmentsWithImages.map((appointment: any) => ({
                 id: appointment.base?.id || 0,
                 churchToolsId: appointment.base?.id || 0,
-                imageUrl: appointment.base?.image?.fileUrl || '',
-                title: appointment.base?.title || appointment.base?.caption || 'Veranstaltung',
+                imageUrl: appointment.base?.image?.fileUrl || appointment.event?.image?.fileUrl || '',
+                title: appointment.base?.title || appointment.base?.caption || appointment.event?.name || 'Veranstaltung',
                 startDate: appointment.base?.startDate || ''
             }));
 
