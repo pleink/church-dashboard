@@ -12,7 +12,7 @@ export function Birthdays() {
           DIESE WOCHE FEIERN WIR...
         </h2>
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-church-blue mx-auto"></div>
+          <span className="loading loading-ring loading-lg text-church-blue"></span>
           <p className="text-xl-custom text-gray-600 mt-4">Lade Geburtstage...</p>
         </div>
       </section>

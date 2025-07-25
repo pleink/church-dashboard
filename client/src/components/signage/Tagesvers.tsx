@@ -12,7 +12,7 @@ export function Tagesvers() {
           TAGESVERS
         </h2>
         <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          <span className="loading loading-ring loading-lg text-white"></span>
           <p className="text-xl-custom mt-4">Lade Bibelvers...</p>
         </div>
       </section>
