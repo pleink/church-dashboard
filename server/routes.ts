@@ -2,6 +2,7 @@ import type {Express} from "express";
 import {createServer, type Server} from "http";
 import {storage} from "./storage";
 import {getChurchToolsService} from "./services/churchtools";
+import config from "../config.json";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -178,8 +179,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     app.get("/api/signage/verse", async (req, res) => {
         try {
-            // Fetch daily verse from Devotionalium API with Luther translation
-            const response = await fetch('https://devotionalium.com/api/v2?lang=de-de&bibleVersion=lut');
+            // Fetch daily verse from Devotionalium API with configured translation
+            const apiUrl = `https://devotionalium.com/api/v2?lang=${config.devotionalium.language}&bibleVersion=${config.devotionalium.bibleVersion}`;
+            const response = await fetch(apiUrl);
             
             if (!response.ok) {
                 throw new Error(`Devotionalium API error: ${response.status}`);

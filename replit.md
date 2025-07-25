@@ -31,9 +31,9 @@ The application is built as a modern web application that can run continuously o
 ## Key Components
 
 ### Data Sources
-1. **ChurchTools Integration**: Primary data source for events, room bookings, and potentially birthdays
-2. **Local Database**: Fallback storage and local content management
-3. **Hybrid Approach**: Attempts ChurchTools first, falls back to local data
+1. **ChurchTools Integration**: Primary data source for events, calendar appointments, and birthdays
+2. **Devotionalium API**: Daily Bible verses with configurable translations
+3. **Local Database**: Fallback storage and local content management
 
 ### Display Sections
 1. **Header**: Church branding, real-time clock, and current date
@@ -135,6 +135,7 @@ Changelog:
   • API fetches fresh daily verses automatically from devotionalium.com/api/v2
   • Fixed TypeScript error by installing @types/react-slick package
   • Enhanced flyer carousel to use full width layout (col-span-12)
+  • Moved Bible translation settings to config.json for easy configuration
 ```
 
 ## User Preferences
