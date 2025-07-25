@@ -97,9 +97,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : '',
-                        resource: resourceText
+                        resource: resourceText,
+                        startDate: booking.base?.startDate
                     };
-                });
+                }).sort((a, b) => {
+                    const dateA = a.startDate ? new Date(a.startDate) : new Date();
+                    const dateB = b.startDate ? new Date(b.startDate) : new Date();
+                    return dateA.getTime() - dateB.getTime();
+                }).map(({ startDate, ...booking }) => booking);
 
                 res.json(formattedBookings);
             } else {
@@ -168,9 +173,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
                             day: 'numeric',
                             month: 'short'
                         }) : '',
-                        resource: resourceText
+                        resource: resourceText,
+                        startDate: booking.base?.startDate
                     };
-                });
+                }).sort((a, b) => {
+                    const dateA = a.startDate ? new Date(a.startDate) : new Date();
+                    const dateB = b.startDate ? new Date(b.startDate) : new Date();
+                    return dateA.getTime() - dateB.getTime();
+                }).map(({ startDate, ...booking }) => booking);
 
                 res.json(formattedBookings);
             } else {
