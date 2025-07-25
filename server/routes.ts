@@ -59,7 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 
                 churchToolsBookings.forEach(booking => {
                     const key = `${booking.base?.caption}-${booking.base?.startDate}-${booking.base?.endDate}`;
-                    const roomName = (booking as any).calculated?.resource?.name || 'Raum';
+                    const roomName = booking.base?.resource?.name || 'Raum';
                     
                     if (groupedBookings.has(key)) {
                         const existing = groupedBookings.get(key);
@@ -104,13 +104,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const churchToolsBookings = await churchToolsService.getUpcomingBookings(7);
 
             if (churchToolsBookings.length > 0) {
+
+                
                 // Group bookings by unique combination of title, start time, and end time
                 // but collect all room names for each event
                 const groupedBookings = new Map();
                 
                 churchToolsBookings.forEach(booking => {
                     const key = `${booking.base?.caption}-${booking.base?.startDate}-${booking.base?.endDate}`;
-                    const roomName = (booking as any).calculated?.resource?.name || 'Raum';
+                    const roomName = booking.base?.resource?.name || 'Raum';
                     
                     if (groupedBookings.has(key)) {
                         const existing = groupedBookings.get(key);
