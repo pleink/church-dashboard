@@ -157,3 +157,33 @@
     margin: 0 auto;
   }
 }
+
+/* Fix react-slick carousel full width issues */
+.slick-slider {
+  width: 100% !important;
+}
+
+.slick-list {
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+.slick-track {
+  width: 100% !important;
+  display: flex !important;
+}
+
+.slick-slide {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.slick-slide > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.slick-slide img {
+  width: 100% !important;
+  max-width: 100% !important;
+}
