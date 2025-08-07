@@ -1,7 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config({
-  path: '.env'
-});
+dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
