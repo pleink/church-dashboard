@@ -46,15 +46,15 @@
     ],
     "kidsDescriptions": {
       "68": "0 bis 4 Jahre",
-      "71": "Kindergarten bis 1.Klasse",
-      "116": "2. bis 5.Klasse",
+      "71": "ab Kindergarten",
+      "116": "ab 2.Klasse",
       "136": "ab 6.Klasse"
     },
     "kidsStatus": {
       "kidsDrin": "Gemeinsamer Start im Gottesdienst",
-      "kidsDraussen": "Treffpunkt im 1. OG",
+      "kidsDraussen": "Treffpunkt im OG",
       "teensDrin": "Gemeinsamer Start im Gottesdienst",
-      "teensDraussen": "Treffpunkt im 1. UG"
+      "teensDraussen": "Treffpunkt im UG"
     },
     "specialsKeywords": [
       "Abendmahl",

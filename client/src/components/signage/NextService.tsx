@@ -165,8 +165,10 @@ export default function NextService() {
                                 <div className="space-y-2 text-sm text-gray-700 mt-2">
                                     {event.services.kids.map((svc) => (
                                         <div key={svc.id} className="rounded-lg border border-gray-200 bg-white shadow-sm px-4 py-3">
-                                            <div className="font-semibold text-gray-800">{svc.name}</div>
-                                            {svc.description && <div className="text-gray-600">{svc.description}</div>}
+                                            <div className="font-semibold text-gray-800">
+                                                {svc.name}
+                                                {svc.description && <span className="text-gray-600 font-normal"> ({svc.description})</span>}
+                                            </div>
                                             {svc.statusLabel && <div className="text-gray-700">{svc.statusLabel}</div>}
                                         </div>
                                     ))}
