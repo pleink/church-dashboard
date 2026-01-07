@@ -67,17 +67,16 @@ export function FlyerCarousel() {
     }
 
     return (
-        <section className="col-span-12 section-card p-4 w-full">
-            <div className="relative w-full">
-                <Slider {...settings}>
+        <section className="col-span-12 section-card p-4 w-full h-full flex flex-col overflow-hidden">
+            <div className="relative w-full h-full flex-1">
+                <Slider {...settings} className="h-full">
                     {activeFlyers.map((flyer) => (
-                        <div key={flyer.churchToolsId || flyer.id} className="w-full">
-                            <div className="relative bg-white rounded-xl overflow-hidden flex items-center justify-center" style={{ height: '520px' }}>
+                        <div key={flyer.churchToolsId || flyer.id} className="w-full h-full">
+                            <div className="relative bg-white overflow-hidden flex items-center justify-center h-full min-h-[520px] rounded-xl">
                                 <img
                                     src={flyer.imageUrl}
                                     alt={flyer.title}
-                                    className="max-h-full max-w-full object-contain w-full"
-                                    style={{ objectFit: 'contain' }}
+                                    className="w-full h-full object-contain"
                                     onError={(e) => {
                                         console.error('Failed to load image:', flyer.imageUrl);
                                         const target = e.target as HTMLImageElement;

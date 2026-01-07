@@ -11,10 +11,10 @@ export default function Signage() {
     const isSunday = today.getDay() === 0;
 
     return (
-        <div className="signage-container mx-auto bg-gray-50 overflow-hidden">
+        <div className="signage-container mx-auto bg-gray-50 overflow-hidden min-h-screen flex flex-col">
             <Header />
 
-            <div className="px-16 py-8 grid grid-cols-12 gap-8 h-full">
+            <div className="px-16 py-8 grid grid-cols-12 gap-8 flex-1">
                 {isSunday ? (
                     <>
                         <NextServiceSunday />
