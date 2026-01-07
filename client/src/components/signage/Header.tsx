@@ -30,7 +30,7 @@ export function Header() {
   return (
     <header className="bg-white shadow-sm px-16 py-12 flex justify-between items-center relative">
       {status && (
-        <div className="fixed top-0 left-0 p-1 pointer-events-none z-50">
+        <div className="fixed top-0 left-0 p-1 pointer-events-none z-50" style={{ top: 0, left: 0, lineHeight: 0 }}>
           <span
             className={`inline-block w-1.5 h-1.5 rounded-full ${status.connected ? 'bg-green-500 animate-pulse' : 'bg-red-500 animate-pulse'
               }`}
