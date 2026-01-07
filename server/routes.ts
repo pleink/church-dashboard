@@ -171,6 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         title: allowDisplay ? getDisplayTitle(appointment) : '',
                         color: getCalendarColor(appointment),
                         startDateTime: start,
+                        calendarName: appointment.base?.calendar?.name || '',
                         location: getRoomResources(appointment),
                         startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
@@ -239,6 +240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         title: allowDisplay ? getDisplayTitle(appointment) : '',
                         color: getCalendarColor(appointment),
                         startDateTime: start,
+                        calendarName: appointment.base?.calendar?.name || '',
                         location: getRoomResources(appointment),
                         startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
                             hour: '2-digit',

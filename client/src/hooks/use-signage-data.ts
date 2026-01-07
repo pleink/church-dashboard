@@ -17,6 +17,7 @@ interface TodayAppointment {
   color?: string;
   location?: string;
   startDateTime?: string;
+  calendarName?: string;
   startTime: string;
   endTime: string;
   date: string;
@@ -32,6 +33,7 @@ interface UpcomingAppointment {
   color?: string;
   location?: string;
   startDateTime?: string;
+  calendarName?: string;
   startTime: string;
   endTime: string;
   date: string;
