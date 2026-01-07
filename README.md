@@ -16,6 +16,8 @@ TO=$(date -u -d "$FROM +6 days" +"%Y-%m-%d")
 
 curl -H "Authorization: Login $CHURCHTOOLS_API_TOKEN" \
   "$CHURCHTOOLS_API_BASE/calendars/appointments?from=$FROM&to=$TO&calendar_ids[]=2&calendar_ids[]=28&calendar_ids[]=22&calendar_ids[]=25&calendar_ids[]=43&calendar_ids[]=61&calendar_ids[]=58&calendar_ids[]=54&calendar_ids[]=63&calendar_ids[]=55&calendar_ids[]=49&calendar_ids[]=42&calendar_ids[]=35&include[]=event&include[]=group&include[]=bookings"
+
+# Next sermon (Gottesdienst) comes from calendar 2 via `/api/signage/sermon` (frontend hook `useSignageSermon`)
 ```
 
 ## Config-driven calendar mapping

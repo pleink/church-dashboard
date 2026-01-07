@@ -84,7 +84,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         appointment.base?.endDate ||
         '';
     // Signage data endpoints
-    app.get("/api/signage/events", async (_req, res) => {
+    // Sermons (next service) endpoint
+    app.get("/api/signage/sermon", async (_req, res) => {
         try {
             const sermonCalendarIds = config.calendars?.sermons ?? [];
             const sermonAppointments = await churchToolsService.getCalendarAppointments(

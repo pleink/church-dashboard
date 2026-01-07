@@ -1,8 +1,8 @@
 import { Star, Calendar, Clock } from "lucide-react";
-import { useSignageEvent } from "@/hooks/use-signage-data";
+import { useSignageSermon } from "@/hooks/use-signage-data";
 
 export function UpcomingEvent() {
-  const { data: event, isLoading, error } = useSignageEvent();
+  const { data: event, isLoading, error } = useSignageSermon();
 
   if (isLoading) {
     return (

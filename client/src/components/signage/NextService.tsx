@@ -1,8 +1,8 @@
-import { useSignageEvent } from "../../hooks/use-signage-data";
+import { useSignageSermon } from "../../hooks/use-signage-data";
 import { Calendar, Clock, MapPin } from "lucide-react";
 
 export default function NextService() {
-    const { data: event, isLoading } = useSignageEvent();
+    const { data: event, isLoading } = useSignageSermon();
 
     if (isLoading) {
         return (
