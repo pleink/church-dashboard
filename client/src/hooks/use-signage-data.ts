@@ -4,10 +4,24 @@ interface SignageEvent {
   id: number;
   title: string;
   description?: string;
+  descriptionLines?: string[];
+  predigtLine?: string;
+  specials?: string[];
+  services?: {
+    program: { id: number; name: string; person?: string }[];
+    kids: { id: number; name: string; person?: string; description?: string; statusLabel?: string }[];
+    gastro: {
+      id: number;
+      name: string;
+      status: 'open' | 'closingSoon' | 'closed' | 'openingSoon' | 'unavailable';
+      label: string;
+      tone: 'green' | 'yellow' | 'red' | 'muted';
+    }[];
+  };
   date: string;
   time: string;
-  imageUrl?: string;
   location?: string;
+  imageUrl?: string;
 }
 
 interface TodayAppointment {

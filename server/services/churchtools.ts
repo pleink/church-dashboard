@@ -19,6 +19,17 @@ interface AppConfig {
   resources: {
     roomTypeIds: number[];
   };
+  services: {
+    excludeGroupIds: number[];
+    kidsDescriptions: Record<string, string>;
+    kidsStatus: {
+      kidsDrin: string;
+      kidsDraussen: string;
+      teensDrin: string;
+      teensDraussen: string;
+    };
+    specialsKeywords: string[];
+  };
   signage: {
     refreshInterval: number;
     maxUpcomingDays: number;
@@ -44,6 +55,8 @@ type GetCalendarsResponse =
   operations["get-calendars"]["responses"]["200"]["content"]["application/json"];
 type GetGroupTypesResponse =
   operations["get-group-grouptypes"]["responses"]["200"]["content"]["application/json"];
+type GetEventResponse =
+  operations["getEvent"]["responses"]["200"]["content"]["application/json"];
 
 // Define simplified types for our usage
 type ChurchToolsEvent = NonNullable<GetEventsResponse["data"]>[number];
@@ -53,6 +66,11 @@ type ChurchToolsPerson = NonNullable<GetPersonsResponse["data"]>[number];
 type ChurchToolsAppointment = NonNullable<GetCalendarAppointmentsResponse["data"]>[number];
 type ChurchToolsCalendar = NonNullable<GetCalendarsResponse["data"]>[number];
 type ChurchToolsGroupType = NonNullable<GetGroupTypesResponse["data"]>[number];
+type ChurchToolsServiceDef = {
+  id: number;
+  name: string;
+  serviceGroupId: number | null;
+};
 
 interface ChurchToolsApiResponse<T> {
   data: T;
@@ -62,6 +80,7 @@ export class ChurchToolsService {
   private config: ChurchToolsConfig;
   private appConfig: AppConfig;
   private cachedCalendars: ChurchToolsCalendar[] | null = null;
+  private cachedServices: ChurchToolsServiceDef[] | null = null;
 
   constructor() {
     console.log("getting envs in service");
@@ -90,6 +109,17 @@ export class ChurchToolsService {
         resources: {
           roomTypeIds: parsedConfig.resources?.roomTypeIds ?? [2],
         },
+        services: {
+          excludeGroupIds: parsedConfig.services?.excludeGroupIds ?? [],
+          kidsDescriptions: parsedConfig.services?.kidsDescriptions ?? {},
+          kidsStatus: parsedConfig.services?.kidsStatus ?? {
+            kidsDrin: "Kids drinnen",
+            kidsDraussen: "Kids draussen",
+            teensDrin: "Teens drinnen",
+            teensDraussen: "Teens draussen",
+          },
+          specialsKeywords: parsedConfig.services?.specialsKeywords ?? ["Abendmahl", "Kirche weltweit"],
+        },
         signage: {
           refreshInterval: parsedConfig.signage?.refreshInterval ?? 15,
           maxUpcomingDays: parsedConfig.signage?.maxUpcomingDays ?? 7,
@@ -110,6 +140,17 @@ export class ChurchToolsService {
         },
         resources: {
           roomTypeIds: [2],
+        },
+        services: {
+          excludeGroupIds: [],
+          kidsDescriptions: {},
+          kidsStatus: {
+            kidsDrin: "Kids drinnen",
+            kidsDraussen: "Kids draussen",
+            teensDrin: "Teens drinnen",
+            teensDraussen: "Teens draussen",
+          },
+          specialsKeywords: ["Abendmahl", "Kirche weltweit"],
         },
         signage: {
           refreshInterval: 15,
@@ -423,6 +464,32 @@ export class ChurchToolsService {
         connected: false,
         lastUpdate: new Date().toISOString(),
       };
+    }
+  }
+
+  async getEvent(eventId: number): Promise<GetEventResponse["data"] | null> {
+    try {
+      const event = await this.makeRequest<GetEventResponse["data"]>(`/events/${eventId}`);
+      return event || null;
+    } catch (error) {
+      console.error(`Error fetching event ${eventId}:`, error);
+      return null;
+    }
+  }
+
+  async getServices(): Promise<ChurchToolsServiceDef[]> {
+    try {
+      if (this.cachedServices) return this.cachedServices;
+      const services = await this.makeRequest<any[]>("/services");
+      this.cachedServices = (services || []).map((svc: any) => ({
+        id: svc.id,
+        name: svc.name,
+        serviceGroupId: svc.serviceGroupId ?? null,
+      }));
+      return this.cachedServices;
+    } catch (error) {
+      console.error("Error fetching services list:", error);
+      return [];
     }
   }
 }

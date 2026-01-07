@@ -27,7 +27,7 @@
       "55": "Kleingruppe Frauen",
       "49": "Kleingruppe Herren",
       "42": "Kleingruppe gemischt",
-      "35": "Externe Vermittlung"
+      "35": "Externe Vermietung"
     },
     "descriptionOverrides": {
       "35": "Bei Fragen dürfen sie sich gerne an Max Muster wenden"
@@ -36,6 +36,29 @@
   "resources": {
     "roomTypeIds": [
       2
+    ]
+  },
+  "services": {
+    "excludeGroupIds": [
+      3,
+      4,
+      7
+    ],
+    "kidsDescriptions": {
+      "68": "0 bis 4 Jahre",
+      "71": "Kindergarten bis 1.Klasse",
+      "116": "2. bis 5.Klasse",
+      "136": "ab 6.Klasse"
+    },
+    "kidsStatus": {
+      "kidsDrin": "Kids drinnen",
+      "kidsDraussen": "Kids draussen",
+      "teensDrin": "Teens drinnen",
+      "teensDraussen": "Teens draussen"
+    },
+    "specialsKeywords": [
+      "Abendmahl",
+      "Kirche weltweit"
     ]
   },
   "signage": {

@@ -15,6 +15,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...(config.calendars?.groupEvents ?? []),
     ]));
 
+    const serviceConfig = {
+        excludeGroupIds: config.services?.excludeGroupIds ?? [],
+        kidsDescriptions: config.services?.kidsDescriptions ?? {},
+        kidsStatus: config.services?.kidsStatus ?? {
+            kidsDrin: "Kids drinnen",
+            kidsDraussen: "Kids draussen",
+            teensDrin: "Teens drinnen",
+            teensDraussen: "Teens draussen",
+        },
+        specialsKeywords: config.services?.specialsKeywords ?? ["Abendmahl", "Kirche weltweit"],
+    };
+
     const getDisplayTitle = (appointment: any) => {
         const calendarId = appointment.base?.calendar?.id;
         const override = calendarId != null ? titleOverrides[String(calendarId)] : undefined;
@@ -83,6 +95,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
         appointment.appointment?.calculated?.endDate ||
         appointment.base?.endDate ||
         '';
+
+    const dedupeById = (items: any[]) => {
+        const seen = new Set<number>();
+        return items.filter((item) => {
+            const id = item.id;
+            if (!id || seen.has(id)) return false;
+            seen.add(id);
+            return true;
+        });
+    };
+
+    const getNow = () => new Date();
+
+    const computeGastroStatus = (serviceId: number, hasStaff: boolean) => {
+        const now = getNow();
+        const minutes = now.getHours() * 60 + now.getMinutes();
+
+        if (!hasStaff) {
+            return { status: 'unavailable', label: 'Heute geschlossen', tone: 'muted' as const };
+        }
+
+        // Kaffeebar (id 140): open 09:30-09:55, last 5 min yellow
+        if (serviceId === 140) {
+            const start = 9 * 60 + 30; // 09:30
+            const warn = 9 * 60 + 50;  // 09:50
+            const end = 9 * 60 + 55;   // 09:55
+
+            if (minutes < start || minutes > end) {
+                return { status: 'closed', label: 'Geschlossen', tone: 'red' as const };
+            }
+            if (minutes >= warn) {
+                return { status: 'closingSoon', label: 'Schliesst bald', tone: 'yellow' as const };
+            }
+            return { status: 'open', label: 'Offen', tone: 'green' as const };
+        }
+
+        // Bistro (id 127): opens 11:30, closes 13:00
+        if (serviceId === 127) {
+            const start = 11 * 60 + 30; // 11:30
+            const end = 13 * 60;        // 13:00
+
+            if (minutes < start) {
+                return { status: 'openingSoon', label: 'Öffnet um 11:30', tone: 'yellow' as const };
+            }
+            if (minutes > end) {
+                return { status: 'closed', label: 'Geschlossen', tone: 'red' as const };
+            }
+            return { status: 'open', label: 'Offen', tone: 'green' as const };
+        }
+
+        return { status: 'open', label: 'Offen', tone: 'green' as const };
+    };
     // Signage data endpoints
     // Sermons (next service) endpoint
     app.get("/api/signage/sermon", async (_req, res) => {
@@ -118,6 +182,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const startDate = nextSermon.start || '';
             const endDate = nextSermon.end || '';
 
+            const kidsAllowedIds = new Set(Object.keys(serviceConfig.kidsDescriptions || {}).map((k) => Number(k)));
+
+            // Try to enrich with event details (services/description)
+            const events = await churchToolsService.getUpcomingEvents(10);
+            const matchedEvent = events.find((ev: any) => ev.startDate === startDate) || null;
+            const detailedEvent = matchedEvent ? await churchToolsService.getEvent(matchedEvent.id!) : null;
+            const allServices = await churchToolsService.getServices();
+
+            const descriptionText = detailedEvent?.description || detailedEvent?.note || nextSermon.base?.description || '';
+            const descriptionLines: string[] = descriptionText
+                ? descriptionText.split('\n').map((line: string) => line.trim()).filter(Boolean)
+                : [];
+
+            const predigtLine = descriptionLines.find((line: string) => line.toLowerCase().includes('predigt')) || '';
+            const predigtText = predigtLine ? predigtLine.replace(/predigt[:]?\\s*/i, '') : '';
+            const specials = descriptionLines.filter((line: string) =>
+                (serviceConfig.specialsKeywords || []).some((kw: string) =>
+                    line.toLowerCase().includes(kw.toLowerCase())
+                )
+            );
+            const hasKidsDraussen = descriptionLines.some((line: string) => /kids\s*drau/i.test(line));
+            const hasKidsDrin = descriptionLines.some((line: string) => /kids\s*drin/i.test(line));
+            const hasTeensDraussen = descriptionLines.some((line: string) => /teens\s*drau/i.test(line));
+            const hasTeensDrin = descriptionLines.some((line: string) => /teens\s*drin/i.test(line));
+
+            const services = (detailedEvent?.eventServices || [])
+                .map((svc: any) => {
+                    const def = allServices.find((d) => d.id === svc.serviceId);
+                    const groupId = def?.serviceGroupId ?? null;
+                    return {
+                        id: svc.serviceId,
+                        name: def?.name || svc.name || svc.person?.title || '',
+                        person: svc.person?.title || svc.name || '',
+                        groupId,
+                    };
+                })
+                .filter((svc) => {
+                    if (kidsAllowedIds.has(svc.id) || svc.id === 136) return true;
+                    return svc.groupId == null || !serviceConfig.excludeGroupIds.includes(svc.groupId);
+                });
+
+            // Build gastro list from definitions to ensure they appear even without staffing
+            const gastroDefs = allServices.filter((d) => d.serviceGroupId === 8);
+
+            const categorizedServices = {
+                program: dedupeById(
+                    services
+                        .filter(s => (s.groupId === 1 || (s.groupId !== 5 && s.groupId !== 8)) && !!s.person)
+                        .sort((a, b) => a.id - b.id)
+                ),
+                kids: dedupeById(
+                    services
+                        .filter(s => (s.groupId === 5 || s.id === 136) && kidsAllowedIds.has(s.id))
+                        .map(s => {
+                            const baseDesc = (serviceConfig.kidsDescriptions as Record<string, string>)[String(s.id)] || undefined;
+                            let statusLabel: string | undefined = undefined;
+                            if (s.id === 136) {
+                                if (hasTeensDraussen) statusLabel = serviceConfig.kidsStatus?.teensDraussen;
+                                else if (hasTeensDrin) statusLabel = serviceConfig.kidsStatus?.teensDrin;
+                            } else {
+                                if (hasKidsDraussen) statusLabel = serviceConfig.kidsStatus?.kidsDraussen;
+                                else if (hasKidsDrin) statusLabel = serviceConfig.kidsStatus?.kidsDrin;
+                            }
+                            return {
+                                ...s,
+                                description: baseDesc,
+                                statusLabel,
+                            };
+                        })
+                        .sort((a, b) => a.id - b.id)
+                ),
+                gastro: dedupeById(
+                    gastroDefs
+                        .map((def) => {
+                            const assigned = services.find((s) => s.id === def.id);
+                            const hasStaff = !!assigned;
+                            const status = computeGastroStatus(def.id, hasStaff);
+                            return {
+                                id: def.id,
+                                name: def.name,
+                                person: undefined,
+                                status: status.status,
+                                label: status.label,
+                                tone: status.tone,
+                            };
+                        })
+                        .sort((a, b) => a.id - b.id)
+                ),
+            };
+
             const formattedEvent = {
                 id: nextSermon.base?.id || 0,
                 title: getDisplayTitle(nextSermon),
@@ -136,7 +290,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     minute: '2-digit'
                 })}` : '',
                 imageUrl: extractImage(nextSermon),
-                location: getRoomResources(nextSermon)
+                location: '',
+                descriptionLines,
+                predigtLine: predigtText,
+                specials,
+                services: categorizedServices
             };
 
             res.json(formattedEvent);
