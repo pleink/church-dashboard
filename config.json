@@ -51,10 +51,10 @@
       "136": "ab 6.Klasse"
     },
     "kidsStatus": {
-      "kidsDrin": "Kids drinnen",
-      "kidsDraussen": "Kids draussen",
-      "teensDrin": "Teens drinnen",
-      "teensDraussen": "Teens draussen"
+      "kidsDrin": "Gemeinsamer Start im Gottesdienst",
+      "kidsDraussen": "Treffpunkt im 1. OG",
+      "teensDrin": "Gemeinsamer Start im Gottesdienst",
+      "teensDraussen": "Treffpunkt im 1. UG"
     },
     "specialsKeywords": [
       "Abendmahl",

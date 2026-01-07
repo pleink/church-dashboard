@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import logoPath from "@assets/fkw_logo.svg";
+import { useApiStatus } from "@/hooks/use-signage-data";
 
 export function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const { data: status } = useApiStatus();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -26,7 +28,16 @@ export function Header() {
   });
 
   return (
-    <header className="bg-white shadow-sm px-16 py-12 flex justify-between items-center">
+    <header className="bg-white shadow-sm px-16 py-12 flex justify-between items-center relative">
+      {status && (
+        <div className="fixed pointer-events-none z-50 leading-none p-1" style={{ top: 0, left: 0, lineHeight: 0 }}>
+          <span
+            className={`inline-block w-1.5 h-1.5 rounded-full ${
+              status.connected ? 'bg-green-500 animate-pulse' : 'bg-red-500 animate-pulse'
+            }`}
+          ></span>
+        </div>
+      )}
       <div className="flex items-center space-x-8">
         <div className="flex items-center space-x-6">
           <img 
