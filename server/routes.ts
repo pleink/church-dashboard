@@ -26,6 +26,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         specialsKeywords: config.services?.specialsKeywords ?? ["Abendmahl", "Kirche weltweit"],
     };
+    const labelConfig = config.labels ?? {};
+
+    app.get("/api/signage/labels", (_req, res) => {
+        res.json({
+            eventsTitle: labelConfig.eventsTitle || "BLICK VORAUS",
+            eventsToday: labelConfig.eventsToday || "HEUTE BEI UNS",
+            eventsUpcoming: labelConfig.eventsUpcoming || "IN DEN NÄCHSTEN TAGEN",
+            sermonTitle: labelConfig.sermonTitle || "WIR FEIERN GOTTESDIENST",
+            sermonProgram: labelConfig.sermonProgram || "MIT DABEI",
+            sermonKids: labelConfig.sermonKids || "FÜR UNSERE KIDS & TEENS",
+            sermonGastro: labelConfig.sermonGastro || "KAFFEE & BEGEGNUNG",
+            birthdaysTitle: labelConfig.birthdaysTitle || "DIESE WOCHE FEIERN WIR...",
+            verseTitle: labelConfig.verseTitle || "TAGESVERS",
+            flyersTitle: labelConfig.flyersTitle || "FLYER",
+        });
+    });
 
     const getDisplayTitle = (appointment: any) => {
         const calendarId = appointment.base?.calendar?.id;
@@ -280,7 +296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 date: startDate ? new Date(startDate).toLocaleDateString('de-DE', {
                     day: 'numeric',
                     month: 'long',
-                    year: 'numeric'
+                    weekday: 'short'
                 }) : '',
                 time: startDate && endDate ? `${new Date(startDate).toLocaleTimeString('de-DE', {
                     hour: '2-digit',
@@ -329,7 +345,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         title: allowDisplay ? getDisplayTitle(appointment) : '',
                         color: getCalendarColor(appointment),
                         startDateTime: start,
-                        calendarName: appointment.base?.calendar?.name || '',
                         location: getRoomResources(appointment),
                         startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
@@ -392,18 +407,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         }
                     }
                     
-                    return {
-                        id: appointment.base?.id || 0,
-                        churchToolsId: appointment.base?.id || 0,
-                        title: allowDisplay ? getDisplayTitle(appointment) : '',
-                        color: getCalendarColor(appointment),
-                        startDateTime: start,
-                        calendarName: appointment.base?.calendar?.name || '',
-                        location: getRoomResources(appointment),
-                        startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        }) : '',
+                        return {
+                            id: appointment.base?.id || 0,
+                            churchToolsId: appointment.base?.id || 0,
+                            title: allowDisplay ? getDisplayTitle(appointment) : '',
+                            color: getCalendarColor(appointment),
+                            startDateTime: start,
+                            location: getRoomResources(appointment),
+                            startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }) : '',
                         endTime: end ? new Date(end).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
                             minute: '2-digit'

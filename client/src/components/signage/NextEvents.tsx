@@ -1,9 +1,13 @@
-import { useTodayAppointments, useUpcomingAppointments } from "../../hooks/use-signage-data";
+import { useTodayAppointments, useUpcomingAppointments, useSignageLabels } from "../../hooks/use-signage-data";
 import { Calendar, Clock, MapPin } from "lucide-react";
 
 export default function NextEvents() {
     const { data: todayAppointments = [], isLoading: isLoadingToday } = useTodayAppointments();
     const { data: upcomingAppointments = [], isLoading: isLoadingUpcoming } = useUpcomingAppointments();
+    const { data: labels } = useSignageLabels();
+    const title = labels?.eventsTitle || "BLICK VORAUS";
+    const todayLabel = labels?.eventsToday || "HEUTE BEI UNS";
+    const upcomingLabel = labels?.eventsUpcoming || "IN DEN NÄCHSTEN TAGEN";
 
     const today = new Date();
     const isSameDay = (iso?: string) => {
@@ -32,7 +36,7 @@ export default function NextEvents() {
             <section className="col-span-7 section-card p-12">
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
                     <Calendar className="text-church-yellow mr-4" size={32} />
-                    NÄCHSTE VERANSTALTUNGEN
+                    {title}
                 </h2>
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
@@ -47,7 +51,7 @@ export default function NextEvents() {
             <section className="col-span-7 section-card p-12">
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
                     <Calendar className="text-church-yellow mr-4" size={32} />
-                    NÄCHSTE VERANSTALTUNGEN
+                    {title}
                 </h2>
                 <div className="text-center py-8">
                     <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -61,12 +65,12 @@ export default function NextEvents() {
         <section className="col-span-7 section-card p-12">
             <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
                 <Calendar className="text-church-yellow mr-4" size={32} />
-                NÄCHSTE VERANSTALTUNGEN
+                {title}
             </h2>
             <div className="space-y-6">
                 {sortedToday.length > 0 && (
                     <div>
-                        <h3 className="text-2xl-custom font-semibold text-gray-800 mb-3">Heute</h3>
+                        <h3 className="text-2xl-custom font-semibold text-gray-800 mb-3">{todayLabel}</h3>
                         <div className="space-y-3">
                             {sortedToday.map((appointment) => (
                                 <div key={`today-${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
@@ -84,11 +88,6 @@ export default function NextEvents() {
                                                     {appointment.location || appointment.resource}
                                                 </p>
                                             ) : null}
-                                            {appointment.calendarName && (
-                                                <p className="text-sm text-gray-500">
-                                                    {appointment.calendarName}
-                                                </p>
-                                            )}
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -112,7 +111,7 @@ export default function NextEvents() {
                         {sortedToday.length > 0 && (
                             <div className="border-t-2 border-gray-200 my-6" />
                         )}
-                        <h3 className="text-2xl-custom font-semibold text-gray-800 mb-3">Demnächst</h3>
+                        <h3 className="text-2xl-custom font-semibold text-gray-800 mb-3">{upcomingLabel}</h3>
                         <div className="space-y-3">
                             {sortedUpcoming.map((appointment) => (
                                 <div key={`upcoming-${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
@@ -136,11 +135,6 @@ export default function NextEvents() {
                                                     {appointment.location || appointment.resource}
                                                 </p>
                                             ) : null}
-                                            {appointment.calendarName && (
-                                                <p className="text-sm text-gray-500">
-                                                    {appointment.calendarName}
-                                                </p>
-                                            )}
                                         </div>
                                     </div>
                                     <div className="text-right">

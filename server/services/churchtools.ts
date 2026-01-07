@@ -30,6 +30,15 @@ interface AppConfig {
     };
     specialsKeywords: string[];
   };
+  labels?: {
+    eventsTitle?: string;
+    eventsToday?: string;
+    eventsUpcoming?: string;
+    sermonTitle?: string;
+    sermonProgram?: string;
+    sermonKids?: string;
+    sermonGastro?: string;
+  };
   signage: {
     refreshInterval: number;
     maxUpcomingDays: number;

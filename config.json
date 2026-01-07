@@ -61,6 +61,17 @@
       "Kirche weltweit"
     ]
   },
+  "labels": {
+    "eventsTitle": "BLICK VORAUS",
+    "eventsToday": "Heute bei uns",
+    "eventsUpcoming": "In den nächsten Tagen",
+    "sermonTitle": "SONNTAG BEI UNS",
+    "sermonProgram": "Für euch da",
+    "sermonKids": "Für unsere Kids & Teens",
+    "sermonGastro": "Kaffee & Begegnung",
+    "birthdaysTitle": "DIESE WOCHE GRATULIEREN WIR",
+    "verseTitle": "TAGESVERS"
+  },
   "signage": {
     "refreshInterval": 15,
     "maxUpcomingDays": 30,

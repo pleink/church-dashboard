@@ -1,8 +1,13 @@
-import { useSignageSermon } from "../../hooks/use-signage-data";
+import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
 import { Calendar, Clock, MapPin, BookOpenText } from "lucide-react";
 
 export default function NextService() {
     const { data: event, isLoading } = useSignageSermon();
+    const { data: labels } = useSignageLabels();
+    const title = labels?.sermonTitle || "WIR FEIERN GOTTESDIENST";
+    const programLabel = labels?.sermonProgram || "MIT DABEI";
+    const kidsLabel = labels?.sermonKids || "FÜR UNSERE KIDS & TEENS";
+    const gastroLabel = labels?.sermonGastro || "KAFFEE & BEGEGNUNG";
 
     if (isLoading) {
         return (
@@ -39,7 +44,7 @@ export default function NextService() {
         <section className="col-span-5 section-card p-8">
             <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
                 <Calendar className="text-church-yellow mr-4" size={32} />
-                NÄCHSTER GOTTESDIENST
+                {title}
             </h2>
             
             {event.imageUrl && (
@@ -87,7 +92,7 @@ export default function NextService() {
                     <div className="space-y-3 pt-2">
                         {event.services.program?.length > 0 && (
                             <div className="pt-1 space-y-3">
-                                <h4 className="text-xl-custom font-semibold text-gray-800">Gottesdienst</h4>
+                                <h4 className="text-xl-custom font-semibold text-gray-800">{programLabel}</h4>
                                 {(() => {
                                     const roleLabels: Record<number, string> = {
                                         24: 'Predigt',
@@ -131,7 +136,7 @@ export default function NextService() {
 
                         {event.services.kids?.length > 0 && (
                             <div className="pt-1">
-                                <h4 className="text-xl-custom font-semibold text-gray-800">Kinderprogramm</h4>
+                                <h4 className="text-xl-custom font-semibold text-gray-800">{kidsLabel}</h4>
                                 <div className="space-y-2 text-sm text-gray-700 mt-2">
                                     {event.services.kids.map((svc) => (
                                         <div key={svc.id} className="rounded-lg border border-gray-200 bg-white shadow-sm px-4 py-3">
@@ -146,7 +151,7 @@ export default function NextService() {
 
                         {event.services.gastro && (
                             <div className="pt-1">
-                                <h4 className="text-xl-custom font-semibold text-gray-800">Gastro</h4>
+                                <h4 className="text-xl-custom font-semibold text-gray-800">{gastroLabel}</h4>
                                 {event.services.gastro.length > 0 ? (
                                     <div
                                         className={`text-sm text-gray-700 w-full ${

@@ -1,15 +1,17 @@
 import { Book } from "lucide-react";
-import { useVerseOfWeek as useTagesvers } from "@/hooks/use-signage-data";
+import { useVerseOfWeek as useTagesvers, useSignageLabels } from "@/hooks/use-signage-data";
 
 export function Tagesvers() {
   const { data: verse, isLoading, error } = useTagesvers();
+  const { data: labels } = useSignageLabels();
+  const title = labels?.verseTitle || "TAGESVERS";
 
   if (isLoading) {
     return (
       <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
         <h2 className="text-3xl-custom font-semibold mb-8 flex items-center">
           <Book className="text-church-yellow mr-4" size={32} />
-          TAGESVERS
+          {title}
         </h2>
         <div className="text-center py-8">
           <span className="loading loading-ring loading-lg text-white"></span>
@@ -24,7 +26,7 @@ export function Tagesvers() {
       <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
         <h2 className="text-3xl-custom font-semibold mb-8 flex items-center">
           <Book className="text-church-yellow mr-4" size={32} />
-          TAGESVERS
+          {title}
         </h2>
         <div className="space-y-6">
           <blockquote className="text-2xl-custom leading-relaxed font-medium">
@@ -45,7 +47,7 @@ export function Tagesvers() {
     <section className="col-span-5 verse-block text-white p-8 rounded-2xl">
       <h2 className="text-3xl-custom font-semibold mb-6 flex items-center">
         <Book className="text-church-yellow mr-4" size={32} />
-        TAGESVERS
+        {title}
       </h2>
       
       <div className="space-y-4">

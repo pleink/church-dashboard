@@ -31,7 +31,6 @@ interface TodayAppointment {
   color?: string;
   location?: string;
   startDateTime?: string;
-  calendarName?: string;
   startTime: string;
   endTime: string;
   date: string;
@@ -47,7 +46,6 @@ interface UpcomingAppointment {
   color?: string;
   location?: string;
   startDateTime?: string;
-  calendarName?: string;
   startTime: string;
   endTime: string;
   date: string;
@@ -84,6 +82,19 @@ interface ApiStatus {
   lastUpdate: string;
   error?: string;
   service: string;
+}
+
+interface SignageLabels {
+  eventsTitle: string;
+  eventsToday: string;
+  eventsUpcoming: string;
+  sermonTitle: string;
+  sermonProgram: string;
+  sermonKids: string;
+  sermonGastro: string;
+  birthdaysTitle: string;
+  verseTitle: string;
+  flyersTitle: string;
 }
 
 export function useSignageSermon() {
@@ -139,5 +150,12 @@ export function useApiStatus() {
     queryKey: ["/api/signage/status"],
     refetchInterval: 5 * 60 * 1000, // 5 minutes
     staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+}
+
+export function useSignageLabels() {
+  return useQuery<SignageLabels>({
+    queryKey: ["/api/signage/labels"],
+    staleTime: Infinity,
   });
 }

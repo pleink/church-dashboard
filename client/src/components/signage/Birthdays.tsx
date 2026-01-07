@@ -1,15 +1,17 @@
 import { Cake, User } from "lucide-react";
-import { useBirthdays } from "@/hooks/use-signage-data";
+import { useBirthdays, useSignageLabels } from "@/hooks/use-signage-data";
 
 export function Birthdays() {
   const { data: birthdays, isLoading, error } = useBirthdays();
+  const { data: labels } = useSignageLabels();
+  const title = labels?.birthdaysTitle || "DIESE WOCHE FEIERN WIR...";
 
   if (isLoading) {
     return (
       <section className="col-span-7 section-card p-12">
         <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
           <Cake className="text-church-yellow mr-4" size={32} />
-          DIESE WOCHE FEIERN WIR...
+          {title}
         </h2>
         <div className="text-center py-8">
           <span className="loading loading-ring loading-lg text-church-blue"></span>
@@ -24,7 +26,7 @@ export function Birthdays() {
       <section className="col-span-7 section-card p-12">
         <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
           <Cake className="text-church-yellow mr-4" size={32} />
-          DIESE WOCHE FEIERN WIR...
+          {title}
         </h2>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
           <p className="text-xl-custom text-red-800">
@@ -39,7 +41,7 @@ export function Birthdays() {
     <section className="col-span-7 section-card p-8">
       <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
         <Cake className="text-church-yellow mr-4" size={32} />
-        DIESE WOCHE FEIERN WIR...
+        {title}
       </h2>
       
       <div className="grid grid-cols-2 gap-6">
