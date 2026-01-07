@@ -1,5 +1,43 @@
 {
-  "publicCalendars": [2, 22, 25],
+  "publicCalendars": [
+    2,
+    28
+  ],
+  "calendars": {
+    "sermons": [
+      2
+    ],
+    "churchEvents": [
+      28
+    ],
+    "groupEvents": [
+      22,
+      25,
+      43,
+      61,
+      58,
+      54,
+      63,
+      55,
+      49,
+      42,
+      35
+    ],
+    "titleOverrides": {
+      "55": "Kleingruppe Frauen",
+      "49": "Kleingruppe Herren",
+      "42": "Kleingruppe gemischt",
+      "35": "Externe Vermittlung"
+    },
+    "descriptionOverrides": {
+      "35": "Bei Fragen dürfen sie sich gerne an Max Muster wenden"
+    }
+  },
+  "resources": {
+    "roomTypeIds": [
+      2
+    ]
+  },
   "signage": {
     "refreshInterval": 15,
     "maxUpcomingDays": 30,

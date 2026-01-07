@@ -1,47 +1,144 @@
 import type {Express} from "express";
 import {createServer, type Server} from "http";
-import {storage} from "./storage";
 import {getChurchToolsService} from "./services/churchtools";
 import config from "../config.json";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
     const churchToolsService = getChurchToolsService();
+    const roomTypeIds = config.resources?.roomTypeIds ?? [2];
+    const titleOverrides = (config.calendars?.titleOverrides ?? {}) as Record<string, string>;
+    const descriptionOverrides = (config.calendars?.descriptionOverrides ?? {}) as Record<string, string>;
+    const allConfiguredCalendars: number[] = Array.from(new Set([
+        ...(config.calendars?.sermons ?? []),
+        ...(config.calendars?.churchEvents ?? []),
+        ...(config.calendars?.groupEvents ?? []),
+    ]));
+
+    const getDisplayTitle = (appointment: any) => {
+        const calendarId = appointment.base?.calendar?.id;
+        const override = calendarId != null ? titleOverrides[String(calendarId)] : undefined;
+        return override || appointment.base?.title || appointment.base?.caption || 'Termin';
+    };
+
+    const getDisplayDescription = (appointment: any) => {
+        const calendarId = appointment.base?.calendar?.id;
+        const override = calendarId != null ? descriptionOverrides[String(calendarId)] : undefined;
+        return override ?? (appointment.base?.description || '');
+    };
+
+    const getRoomResources = (appointment: any) => {
+        const bookings = appointment.bookings || [];
+        const getRes = (booking: any) =>
+            booking.resource ||
+            booking.base?.resource ||
+            booking.resource?.base ||
+            booking.base?.resource?.base;
+
+        const toLabel = (booking: any) => {
+            const res = getRes(booking) || {};
+            const name = res.name || '';
+            const loc = res.location || '';
+            return loc ? `${name} (${loc})` : name;
+        };
+
+        const roomNames = bookings
+            .filter((booking: any) => {
+                const res = getRes(booking);
+                return res?.resourceTypeId && roomTypeIds.includes(res.resourceTypeId);
+            })
+            .map(toLabel)
+            .filter(Boolean);
+
+        if (roomNames.length > 0) return roomNames.join(', ');
+
+        // Fallback: if no matching room type, list all booking resources
+        const allNames = bookings.map(toLabel).filter(Boolean);
+        return allNames.join(', ');
+    };
+
+    const extractImage = (appointment: any) => {
+        const baseImg = appointment.base?.image;
+        const eventImg = appointment.event?.image;
+        return (
+            baseImg?.fileUrl ||
+            eventImg?.fileUrl ||
+            baseImg?.imageUrl ||
+            eventImg?.imageUrl ||
+            ''
+        );
+    };
+
+    const getCalendarColor = (appointment: any) =>
+        appointment.base?.calendar?.color || undefined;
+
+    const getStart = (appointment: any) =>
+        appointment.calculated?.startDate ||
+        appointment.appointment?.calculated?.startDate ||
+        appointment.base?.startDate ||
+        '';
+
+    const getEnd = (appointment: any) =>
+        appointment.calculated?.endDate ||
+        appointment.appointment?.calculated?.endDate ||
+        appointment.base?.endDate ||
+        '';
     // Signage data endpoints
-    app.get("/api/signage/events", async (req, res) => {
+    app.get("/api/signage/events", async (_req, res) => {
         try {
-            // Try to fetch from ChurchTools first
-            const churchToolsEvents = await churchToolsService.getUpcomingEvents(1);
+            const sermonCalendarIds = config.calendars?.sermons ?? [];
+            const sermonAppointments = await churchToolsService.getCalendarAppointments(
+                sermonCalendarIds,
+                config.signage?.maxUpcomingDays ?? 30
+            );
 
-            if (churchToolsEvents.length > 0) {
-                const event = churchToolsEvents[0];
-                const startDate = event.startDate || '';
-                const endDate = event.endDate || '';
-                
-                const formattedEvent = {
-                    id: event.id,
-                    title: event.name || 'Veranstaltung',
-                    description: event.description || '',
-                    date: startDate ? new Date(startDate).toLocaleDateString('de-DE', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    }) : '',
-                    time: startDate && endDate ? `${new Date(startDate).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}–${new Date(endDate).toLocaleTimeString('de-DE', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}` : '',
-                    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400',
-                    location: ''
-                };
+            const now = new Date();
+            const nextSermon = sermonAppointments
+                .map((a: any) => {
+                    const start = getStart(a);
+                    const end = getEnd(a);
+                    return {
+                        ...a,
+                        start,
+                        end,
+                        startDate: start ? new Date(start) : null,
+                    };
+                })
+                .filter((a: any) => a.startDate && a.startDate >= now)
+                .sort((a: any, b: any) => {
+                    if (!a.startDate || !b.startDate) return 0;
+                    return a.startDate.getTime() - b.startDate.getTime();
+                })[0];
 
-                res.json(formattedEvent);
-            } else {
-                res.status(404).json({message: "Keine bevorstehenden Veranstaltungen gefunden"});
+            if (!nextSermon) {
+                return res.status(404).json({message: "Keine bevorstehenden Gottesdienste gefunden"});
             }
+
+            const startDate = nextSermon.start || '';
+            const endDate = nextSermon.end || '';
+
+            const formattedEvent = {
+                id: nextSermon.base?.id || 0,
+                title: getDisplayTitle(nextSermon),
+                description: getDisplayDescription(nextSermon),
+                color: getCalendarColor(nextSermon),
+                date: startDate ? new Date(startDate).toLocaleDateString('de-DE', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }) : '',
+                time: startDate && endDate ? `${new Date(startDate).toLocaleTimeString('de-DE', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}–${new Date(endDate).toLocaleTimeString('de-DE', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}` : '',
+                imageUrl: extractImage(nextSermon),
+                location: getRoomResources(nextSermon)
+            };
+
+            res.json(formattedEvent);
         } catch (error) {
             console.error("Error fetching events:", error);
             res.status(500).json({message: "Fehler beim Laden der Veranstaltungen"});
@@ -50,34 +147,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     app.get("/api/signage/appointments/today", async (req, res) => {
         try {
-            // Get today's appointments from ChurchTools calendars
+            // Get today's appointments from configured calendars
             const churchToolsAppointments = await churchToolsService.getTodayAppointments();
+            const sermonIds = config.calendars?.sermons ?? [];
+            const filteredAppointments = churchToolsAppointments.filter((appointment: any) => {
+                const calendarId = appointment.base?.calendar?.id || 0;
+                return !sermonIds.includes(calendarId);
+            });
 
-            if (churchToolsAppointments.length > 0) {
-                const formattedAppointments = churchToolsAppointments.map((appointment: any) => {
+            if (filteredAppointments.length > 0) {
+                const formattedAppointments = filteredAppointments.map((appointment: any) => {
                     const calendarId = appointment.base?.calendar?.id || 0;
-                    const isPublic = churchToolsService.isPublicCalendar(calendarId);
-                    const resources = appointment.bookings?.map((booking: any) => booking.resource?.name).filter(Boolean).join(', ') || '';
+                    const isPublic = appointment.base?.calendar?.isPublic ?? churchToolsService.isPublicCalendar(calendarId);
+                    const allowDisplay = isPublic || allConfiguredCalendars.includes(calendarId);
+                    const resources = getRoomResources(appointment);
+                    const start = getStart(appointment);
+                    const end = getEnd(appointment);
 
                     return {
                         id: appointment.base?.id || 0,
                         churchToolsId: appointment.base?.id || 0,
-                        title: isPublic ? (appointment.base?.title || appointment.base?.caption || 'Termin') : '',
-                        startTime: appointment.base?.startDate ? new Date(appointment.base.startDate).toLocaleTimeString('de-DE', {
+                        title: allowDisplay ? getDisplayTitle(appointment) : '',
+                        color: getCalendarColor(appointment),
+                        startDateTime: start,
+                        location: getRoomResources(appointment),
+                        startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : '',
-                        endTime: appointment.base?.endDate ? new Date(appointment.base.endDate).toLocaleTimeString('de-DE', {
+                        endTime: end ? new Date(end).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : '',
-                        date: appointment.base?.startDate ? new Date(appointment.base.startDate).toLocaleDateString('de-DE', {
+                        date: start ? new Date(start).toLocaleDateString('de-DE', {
                             weekday: 'short',
                             day: 'numeric',
                             month: 'short'
                         }) : '',
                         resource: resources,
-                        isPublic,
+                        isPublic: allowDisplay,
                         calendarId
                     };
                 });
@@ -95,13 +203,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.get("/api/signage/appointments/upcoming", async (req, res) => {
         try {
             // Get upcoming appointments from ChurchTools calendars
-            const churchToolsAppointments = await churchToolsService.getUpcomingAppointments(7);
+            const maxUpcomingDays = config.signage?.maxUpcomingDays ?? 7;
+            const churchToolsAppointments = await churchToolsService.getUpcomingAppointments(maxUpcomingDays);
+            const sermonIds = config.calendars?.sermons ?? [];
+            const filteredAppointments = churchToolsAppointments.filter((appointment: any) => {
+                const calendarId = appointment.base?.calendar?.id || 0;
+                return !sermonIds.includes(calendarId);
+            });
 
-            if (churchToolsAppointments.length > 0) {
-                const formattedAppointments = churchToolsAppointments.map((appointment: any) => {
+            if (filteredAppointments.length > 0) {
+                const formattedAppointments = filteredAppointments.map((appointment: any) => {
                     const calendarId = appointment.base?.calendar?.id || 0;
-                    const isPublic = churchToolsService.isPublicCalendar(calendarId);
-                    const resources = appointment.bookings?.map((booking: any) => booking.resource?.name).filter(Boolean).join(', ') || '';
+                    const isPublic = appointment.base?.calendar?.isPublic ?? churchToolsService.isPublicCalendar(calendarId);
+                    const allowDisplay = isPublic || allConfiguredCalendars.includes(calendarId);
+                    const resources = getRoomResources(appointment);
+                    const start = getStart(appointment);
+                    const end = getEnd(appointment);
 
                     // Limit resource display to avoid text wrapping
                     let resourceText = resources;
@@ -118,26 +235,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     return {
                         id: appointment.base?.id || 0,
                         churchToolsId: appointment.base?.id || 0,
-                        title: isPublic ? (appointment.base?.title || appointment.base?.caption || 'Termin') : '',
-                        startTime: appointment.base?.startDate ? new Date(appointment.base.startDate).toLocaleTimeString('de-DE', {
+                        title: allowDisplay ? getDisplayTitle(appointment) : '',
+                        color: getCalendarColor(appointment),
+                        startDateTime: start,
+                        location: getRoomResources(appointment),
+                        startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : '',
-                        endTime: appointment.base?.endDate ? new Date(appointment.base.endDate).toLocaleTimeString('de-DE', {
+                        endTime: end ? new Date(end).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
                             minute: '2-digit'
                         }) : '',
-                        date: appointment.base?.startDate ? new Date(appointment.base.startDate).toLocaleDateString('de-DE', {
+                        date: start ? new Date(start).toLocaleDateString('de-DE', {
                             weekday: 'short',
                             day: 'numeric',
                             month: 'short'
                         }) : '',
                         resource: resourceText,
-                        isPublic,
-                        calendarId,
-                        imageUrl: appointment.base?.image?.fileUrl || null
-                    };
-                });
+                            isPublic: allowDisplay,
+                            calendarId,
+                            imageUrl: extractImage(appointment)
+                        };
+                    });
 
                 res.json(formattedAppointments);
             } else {
@@ -224,46 +344,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     app.get("/api/signage/flyers", async (req, res) => {
         try {
-            // Get upcoming appointments from public calendars that have images
+            // Get upcoming appointments from configured calendars that have images
             const publicAppointments = await churchToolsService.getUpcomingAppointments(30);
             
             // Filter for public calendar appointments with images
             const appointmentsWithImages = publicAppointments
                 .filter((appointment: any) => {
                     const calendarId = appointment.base?.calendar?.id || 0;
-                    const hasImage = appointment.base?.image?.fileUrl || appointment.event?.image?.fileUrl;
-                    const isPublic = churchToolsService.isPublicCalendar(calendarId);
-                    return isPublic && hasImage;
+                    const hasImage = extractImage(appointment);
+                    const inConfig = allConfiguredCalendars.includes(calendarId);
+                    return inConfig && hasImage;
                 })
                 .slice(0, 5); // Limit for performance
 
             let formattedFlyers = appointmentsWithImages.map((appointment: any) => ({
                 id: appointment.base?.id || 0,
                 churchToolsId: appointment.base?.id || 0,
-                imageUrl: appointment.base?.image?.fileUrl || appointment.event?.image?.fileUrl || '',
-                title: appointment.base?.title || appointment.base?.caption || appointment.event?.name || 'Veranstaltung',
+                imageUrl: extractImage(appointment),
+                title: getDisplayTitle(appointment),
                 startDate: appointment.base?.startDate || ''
             }));
-
-            // TEMPORARY: Add mock flyer data for testing since no real appointment has an image yet
-            if (formattedFlyers.length === 0) {
-                formattedFlyers = [
-                    {
-                        id: 999,
-                        churchToolsId: 999,
-                        imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
-                        title: 'Test Event - August 20th',
-                        startDate: '2025-08-20T10:00:00'
-                    },
-                    {
-                        id: 998,
-                        churchToolsId: 998,
-                        imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop',
-                        title: 'Another Test Event',
-                        startDate: '2025-08-22T14:00:00'
-                    }
-                ];
-            }
 
             res.json(formattedFlyers);
         } catch (error) {
@@ -276,7 +376,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.get("/api/signage/status", async (req, res) => {
         try {
             // Test ChurchTools connectivity
-            await churchToolsService.getUpcomingEvents(1);
+            await churchToolsService.getUpcomingEvents(1, { throwOnError: true });
             res.json({
                 connected: true,
                 lastUpdate: new Date().toISOString(),

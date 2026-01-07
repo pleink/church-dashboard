@@ -59,6 +59,12 @@ export default function NextService() {
                     <Clock className="text-church-yellow" size={20} />
                     <span>{event.time}</span>
                 </div>
+                {event.location && (
+                    <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
+                        <MapPin className="text-church-yellow" size={20} />
+                        <span>{event.location}</span>
+                    </div>
+                )}
                 {event.description && (
                     <p className="text-xl-custom text-gray-700 leading-relaxed">
                         {event.description}

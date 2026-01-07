@@ -1,9 +1,26 @@
 import { Calendar, Clock } from "lucide-react";
-import { useTodayRoomBookings, useUpcomingRoomBookings } from "@/hooks/use-signage-data";
+import { useTodayAppointments, useUpcomingAppointments } from "@/hooks/use-signage-data";
+
+type Appointment = {
+  id: number;
+  title: string;
+  startTime: string;
+  endTime: string;
+  date: string;
+  resource: string;
+};
 
 export function RoomUsage() {
-  const { data: todayBookings, isLoading: isLoadingToday, error: errorToday } = useTodayRoomBookings();
-  const { data: upcomingBookings, isLoading: isLoadingUpcoming, error: errorUpcoming } = useUpcomingRoomBookings();
+  const {
+    data: todayBookings = [],
+    isLoading: isLoadingToday,
+    error: errorToday,
+  } = useTodayAppointments();
+  const {
+    data: upcomingBookings = [],
+    isLoading: isLoadingUpcoming,
+    error: errorUpcoming,
+  } = useUpcomingAppointments();
 
   const isLoading = isLoadingToday || isLoadingUpcoming;
   const hasError = errorToday || errorUpcoming;
@@ -53,9 +70,12 @@ export function RoomUsage() {
           Heute
         </h3>
         <div className="space-y-3">
-          {todayBookings && todayBookings.length > 0 ? (
-            todayBookings.map((booking) => (
-              <div key={booking.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+          {todayBookings.length > 0 ? (
+            todayBookings.map((booking: Appointment) => (
+              <div
+                key={booking.id}
+                className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-church-yellow rounded-full"></div>
                   <div>
@@ -87,9 +107,12 @@ export function RoomUsage() {
           Anstehend
         </h3>
         <div className="space-y-3">
-          {upcomingBookings && upcomingBookings.length > 0 ? (
-            upcomingBookings.slice(0, 5).map((booking) => (
-              <div key={booking.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+          {upcomingBookings.length > 0 ? (
+            upcomingBookings.slice(0, 5).map((booking: Appointment) => (
+              <div
+                key={booking.id}
+                className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
                   <div>

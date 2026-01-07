@@ -14,6 +14,9 @@ interface TodayAppointment {
   id: number;
   churchToolsId: number;
   title: string;
+  color?: string;
+  location?: string;
+  startDateTime?: string;
   startTime: string;
   endTime: string;
   date: string;
@@ -26,6 +29,9 @@ interface UpcomingAppointment {
   id: number;
   churchToolsId: number;
   title: string;
+  color?: string;
+  location?: string;
+  startDateTime?: string;
   startTime: string;
   endTime: string;
   date: string;

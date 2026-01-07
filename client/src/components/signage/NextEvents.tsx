@@ -8,7 +8,12 @@ export default function NextEvents() {
     // Combine and sort all appointments
     const allAppointments = [...todayAppointments, ...upcomingAppointments]
         .filter(appointment => appointment.title || appointment.resource) // Show all appointments, even private ones
-        .slice(0, 8); // Limit to 8 entries as per config
+        .sort((a, b) => {
+            const aKey = a.startDateTime || '';
+            const bKey = b.startDateTime || '';
+            return aKey.localeCompare(bKey);
+        })
+        .slice(0, 6); // Limit to 6 entries
 
     if (isLoadingToday || isLoadingUpcoming) {
         return (
@@ -50,7 +55,10 @@ export default function NextEvents() {
                 {allAppointments.map((appointment) => (
                     <div key={`${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
                         <div className="flex items-center space-x-4">
-                            <div className="w-3 h-3 bg-church-yellow rounded-full"></div>
+                            <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: appointment.color || '#facc15' }}
+                            ></div>
                             <div>
                                 {appointment.isPublic && appointment.title ? (
                                     <span className="text-xl-custom font-medium text-gray-800">
@@ -61,9 +69,11 @@ export default function NextEvents() {
                                         Privater Termin
                                     </span>
                                 )}
-                                {appointment.resource && (
-                                    <p className="text-lg text-gray-500">{appointment.resource}</p>
-                                )}
+                                {appointment.location || appointment.resource ? (
+                                    <p className="text-lg text-gray-500">
+                                        {appointment.location || appointment.resource}
+                                    </p>
+                                ) : null}
                             </div>
                         </div>
                         <div className="text-right">

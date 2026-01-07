@@ -32,78 +32,59 @@ export function FlyerCarousel() {
 
     if (isLoading) {
         return (
-            <section className="col-span-12 section-card p-6 w-full">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                    <Image className="text-church-yellow mr-4" size={32} />
-                    FLYER DER WOCHE
-                </h2>
-                <div className="text-center py-8">
-                    <span className="loading loading-ring loading-lg text-church-blue"></span>
-                    <p className="text-xl-custom text-gray-600 mt-4">Lade Flyer...</p>
-                </div>
-            </section>
+        <section className="col-span-12 section-card p-4 w-full">
+            <div className="text-center py-8">
+                <span className="loading loading-ring loading-lg text-church-blue"></span>
+                <p className="text-xl-custom text-gray-600 mt-4">Lade Flyer...</p>
+            </div>
+        </section>
         );
     }
 
     if (error) {
         return (
-            <section className="col-span-12 section-card p-6 w-full">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                    <Image className="text-church-yellow mr-4" size={32} />
-                    FLYER DER WOCHE
-                </h2>
-                <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
-                    <p className="text-xl-custom text-red-800">
-                        Fehler beim Laden der Flyer.
-                    </p>
-                </div>
-            </section>
+        <section className="col-span-12 section-card p-4 w-full">
+            <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
+                <p className="text-xl-custom text-red-800">
+                    Fehler beim Laden der Flyer.
+                </p>
+            </div>
+        </section>
         );
     }
 
     if (!activeFlyers || activeFlyers.length === 0) {
         return (
-            <section className="col-span-12 section-card p-6 w-full">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                    <Image className="text-church-yellow mr-4" size={32} />
-                    FLYER DER WOCHE
-                </h2>
-                <div className="text-center py-12">
-                    <Image className="mx-auto h-16 w-16 text-gray-400 mb-6" />
-                    <p className="text-xl-custom text-gray-500">
-                        Derzeit keine Flyer verfügbar.
-                    </p>
-                </div>
-            </section>
+        <section className="col-span-12 section-card p-4 w-full">
+            <div className="text-center py-12">
+                <Image className="mx-auto h-16 w-16 text-gray-400 mb-6" />
+                <p className="text-xl-custom text-gray-500">
+                    Derzeit keine Flyer verfügbar.
+                </p>
+            </div>
+        </section>
         );
     }
 
     return (
-        <section className="col-span-12 section-card p-8 w-full">
-            <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                <Image className="text-church-yellow mr-4" size={32} />
-                FLYER DER WOCHE
-            </h2>
-            
-            <div className="relative w-full mx-[-2px]">
+        <section className="col-span-12 section-card p-4 w-full">
+            <div className="relative w-full">
                 <Slider {...settings}>
                     {activeFlyers.map((flyer) => (
-                        <div key={flyer.churchToolsId || flyer.id} className="w-full px-2">
-                            <div className="relative bg-white rounded-xl overflow-hidden" style={{ height: '500px' }}>
+                        <div key={flyer.churchToolsId || flyer.id} className="w-full">
+                            <div className="relative bg-white rounded-xl overflow-hidden flex items-center justify-center" style={{ height: '520px' }}>
                                 <img
                                     src={flyer.imageUrl}
                                     alt={flyer.title}
-                                    className="w-full h-full object-cover"
+                                    className="max-h-full max-w-full object-contain w-full"
+                                    style={{ objectFit: 'contain' }}
                                     onError={(e) => {
                                         console.error('Failed to load image:', flyer.imageUrl);
                                         const target = e.target as HTMLImageElement;
                                         target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5YTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkZseWVyIEJpbGQgbmljaHQgdmVyZsO8Z2JhcjwvdGV4dD4KICA8L3N2Zz4K';
                                     }}
-                                    onLoad={() => {
-                                        console.log('Successfully loaded image:', flyer.imageUrl);
-                                    }}
                                 />
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                                     <h3 className="text-xl-custom font-semibold text-white">
                                         {flyer.title}
                                     </h3>
@@ -113,7 +94,6 @@ export function FlyerCarousel() {
                     ))}
                 </Slider>
                 
-                {/* Progress indicator for multiple flyers */}
                 {activeFlyers.length > 1 && (
                     <div className="flex justify-center mt-4 space-x-2">
                         {activeFlyers.map((_, index) => (
