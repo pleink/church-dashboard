@@ -84,19 +84,19 @@ export default function NextEvents({ className }: Props) {
                                             className="w-3 h-3 rounded-full"
                                             style={{ backgroundColor: appointment.color || '#facc15' }}
                                         ></div>
-                                        <div>
-                                            <span className="text-xl-custom font-medium text-gray-800">
+                                        <div className="space-y-1">
+                                            <span className="text-xl-custom font-medium text-gray-800 leading-tight">
                                                 {appointment.title || 'Privater Termin'}
                                             </span>
                                             {appointment.location || appointment.resource ? (
-                                                <p className="text-lg text-gray-500">
+                                                <p className="text-lg text-gray-500 leading-snug break-words max-w-xs">
                                                     {appointment.location || appointment.resource}
                                                 </p>
                                             ) : null}
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl-custom text-gray-600 font-medium">
+                                        <div className="text-xl-custom text-gray-600 font-medium whitespace-nowrap">
                                             {appointment.startTime}–{appointment.endTime}
                                         </div>
                                         {appointment.date && (
@@ -125,25 +125,25 @@ export default function NextEvents({ className }: Props) {
                                             className="w-3 h-3 rounded-full"
                                             style={{ backgroundColor: appointment.color || '#facc15' }}
                                         ></div>
-                                        <div>
+                                        <div className="space-y-1">
                                             {appointment.isPublic && appointment.title ? (
-                                                <span className="text-xl-custom font-medium text-gray-800">
+                                                <span className="text-xl-custom font-medium text-gray-800 leading-tight">
                                                     {appointment.title}
                                                 </span>
                                             ) : (
-                                                <span className="text-xl-custom font-medium text-gray-500 italic">
+                                                <span className="text-xl-custom font-medium text-gray-500 italic leading-tight">
                                                     Privater Termin
                                                 </span>
                                             )}
                                             {appointment.location || appointment.resource ? (
-                                                <p className="text-lg text-gray-500">
+                                                <p className="text-lg text-gray-500 leading-snug break-words max-w-xs">
                                                     {appointment.location || appointment.resource}
                                                 </p>
                                             ) : null}
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl-custom text-gray-600 font-medium">
+                                        <div className="text-xl-custom text-gray-600 font-medium whitespace-nowrap">
                                             {appointment.startTime}–{appointment.endTime}
                                         </div>
                                         {appointment.date && (
