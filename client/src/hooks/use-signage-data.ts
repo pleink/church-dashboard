@@ -8,7 +8,7 @@ interface SignageEvent {
   predigtLine?: string;
   specials?: string[];
   services?: {
-    program: { id: number; name: string; person?: string }[];
+    program: { id: number; name: string; person?: string; avatar?: string }[];
     kids: { id: number; name: string; person?: string; description?: string; statusLabel?: string }[];
     gastro: {
       id: number;

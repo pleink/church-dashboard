@@ -1,5 +1,5 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
-import { Calendar, Clock, MapPin, BookOpenText } from "lucide-react";
+import { Calendar, Clock, MapPin, BookOpenText, User } from "lucide-react";
 
 export default function NextService() {
     const { data: event, isLoading } = useSignageSermon();
@@ -56,10 +56,19 @@ export default function NextService() {
             )}
             
             <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
-                    <Clock className="text-church-yellow" size={20} />
-                    <span>{event.date} • {event.time}</span>
-                </div>
+                {(() => {
+                    const formatDate = (value?: string) => {
+                        if (!value) return "";
+                        return value.replace(/\s*\b\d{4}\b\.?/g, "").trim();
+                    };
+                    const displayDate = formatDate(event.date);
+                    return (
+                        <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
+                            <Clock className="text-church-yellow" size={20} />
+                            <span>{displayDate} • {event.time}</span>
+                        </div>
+                    );
+                })()}
                 {event.location && (
                     <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
                         <MapPin className="text-church-yellow" size={20} />
@@ -104,16 +113,32 @@ export default function NextService() {
                                     return (
                                         <>
                                             {featured.length > 0 && (
-                                                <div className="grid grid-cols-1 gap-2">
-                                                    {featured.map((svc) => (
-                                                        <div
-                                                            key={svc.id}
-                                                            className="flex items-center justify-between px-4 py-2 rounded-lg border border-gray-200 bg-gradient-to-r from-white via-white to-gray-50 shadow-sm"
-                                                        >
-                                                            <span className="text-sm font-semibold text-gray-800">{roleLabels[svc.id]}</span>
-                                                            <span className="text-sm text-gray-700">{svc.person || 'N.N.'}</span>
-                                                        </div>
-                                                    ))}
+                                                <div className={`grid ${featured.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
+                                                    {featured.map((svc) => {
+                                                        const avatar = svc.avatar;
+                                                        return (
+                                                            <div
+                                                                key={svc.id}
+                                                                className="flex items-center gap-3 px-2 py-2"
+                                                            >
+                                                                <div className="w-10 h-10 rounded-full overflow-hidden bg-church-blue text-white flex items-center justify-center text-sm font-semibold">
+                                                                    {avatar ? (
+                                                                        <img
+                                                                            src={avatar}
+                                                                            alt={svc.person || roleLabels[svc.id]}
+                                                                            className="w-full h-full object-cover"
+                                                                        />
+                                                                    ) : (
+                                                                        <User size={16} />
+                                                                    )}
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <div className="text-sm uppercase tracking-wide text-gray-700 font-semibold">{roleLabels[svc.id]}</div>
+                                                                    <div className="text-sm text-gray-800 truncate">{svc.person || 'N.N.'}</div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             )}
                                             {others.length > 0 && (

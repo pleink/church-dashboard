@@ -231,6 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                         id: svc.serviceId,
                         name: def?.name || svc.name || svc.person?.title || '',
                         person: svc.person?.title || svc.name || '',
+                        avatar: svc.person?.imageUrl || '',
                         groupId,
                     };
                 })
