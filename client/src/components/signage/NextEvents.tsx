@@ -1,13 +1,18 @@
 import { useTodayAppointments, useUpcomingAppointments, useSignageLabels } from "../../hooks/use-signage-data";
 import { Calendar, Clock, MapPin } from "lucide-react";
 
-export default function NextEvents() {
+type Props = {
+    className?: string;
+};
+
+export default function NextEvents({ className }: Props) {
     const { data: todayAppointments = [], isLoading: isLoadingToday } = useTodayAppointments();
     const { data: upcomingAppointments = [], isLoading: isLoadingUpcoming } = useUpcomingAppointments();
     const { data: labels } = useSignageLabels();
     const title = labels?.eventsTitle || "BLICK VORAUS";
     const todayLabel = labels?.eventsToday || "HEUTE BEI UNS";
     const upcomingLabel = labels?.eventsUpcoming || "IN DEN NÄCHSTEN TAGEN";
+    const containerClass = className || "col-span-7 section-card p-12";
 
     const today = new Date();
     const isSameDay = (iso?: string) => {
@@ -33,7 +38,7 @@ export default function NextEvents() {
 
     if (isLoadingToday || isLoadingUpcoming) {
         return (
-            <section className="col-span-7 section-card p-12">
+            <section className={containerClass}>
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
                     <Calendar className="text-church-yellow mr-4" size={32} />
                     {title}
@@ -48,7 +53,7 @@ export default function NextEvents() {
 
     if (sortedToday.length === 0 && sortedUpcoming.length === 0) {
         return (
-            <section className="col-span-7 section-card p-12">
+            <section className={containerClass}>
                 <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
                     <Calendar className="text-church-yellow mr-4" size={32} />
                     {title}
@@ -62,7 +67,7 @@ export default function NextEvents() {
     }
 
     return (
-        <section className="col-span-7 section-card p-12">
+        <section className={containerClass}>
             <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
                 <Calendar className="text-church-yellow mr-4" size={32} />
                 {title}

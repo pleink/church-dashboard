@@ -1,21 +1,34 @@
-import {Header} from "@/components/signage/Header";
+import { Header } from "@/components/signage/Header";
 import NextEvents from "@/components/signage/NextEvents";
-import NextService from "@/components/signage/NextService";
-import {Birthdays} from "@/components/signage/Birthdays";
-import {Tagesvers} from "@/components/signage/Tagesvers";
-import {FlyerCarousel} from "@/components/signage/FlyerCarousel.tsx";
+import NextServiceWeekday from "@/components/signage/NextService";
+import NextServiceSunday from "@/components/signage/NextServiceSunday";
+import { Birthdays } from "@/components/signage/Birthdays";
+import { Tagesvers } from "@/components/signage/Tagesvers";
+import { FlyerCarousel } from "@/components/signage/FlyerCarousel.tsx";
 
 export default function Signage() {
+    const today = new Date();
+    const isSunday = today.getDay() === 0;
+
     return (
         <div className="signage-container mx-auto bg-gray-50 overflow-hidden">
-            <Header/>
+            <Header />
 
             <div className="px-16 py-8 grid grid-cols-12 gap-8 h-full">
-                <NextEvents/>
-                <NextService/>
-                <Birthdays/>
-                <Tagesvers/>
-                <FlyerCarousel/>
+                {isSunday ? (
+                    <>
+                        <NextServiceSunday />
+                        <NextEvents className="col-span-5 section-card p-12" />
+                    </>
+                ) : (
+                    <>
+                        <NextEvents />
+                        <NextServiceWeekday />
+                    </>
+                )}
+                <Birthdays />
+                <Tagesvers />
+                <FlyerCarousel />
             </div>
         </div>
     );

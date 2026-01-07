@@ -48,7 +48,7 @@ export function Birthdays() {
         {birthdays && birthdays.length > 0 ? (
           birthdays.slice(0, 4).map((person) => (
             <div key={person.churchToolsId || person.id} className="flex items-center space-x-4">
-              <div className="w-16 h-16 avatar-placeholder rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 min-w-16 flex-shrink-0 avatar-placeholder rounded-full flex items-center justify-center overflow-hidden">
                 {person.avatar ? (
                   <img 
                     src={person.avatar} 

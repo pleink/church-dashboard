@@ -88,7 +88,8 @@ interface SignageLabels {
   eventsTitle: string;
   eventsToday: string;
   eventsUpcoming: string;
-  sermonTitle: string;
+  sermonTitleSunday: string;
+  sermonTitleWeekday: string;
   sermonProgram: string;
   sermonKids: string;
   sermonGastro: string;

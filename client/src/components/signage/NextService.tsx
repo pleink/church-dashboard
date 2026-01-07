@@ -1,20 +1,29 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
 import { Calendar, Clock, MapPin, BookOpenText, User } from "lucide-react";
 
-export default function NextService() {
+export default function NextServiceWeekday() {
     const { data: event, isLoading } = useSignageSermon();
     const { data: labels } = useSignageLabels();
-    const title = labels?.sermonTitle || "WIR FEIERN GOTTESDIENST";
-    const programLabel = labels?.sermonProgram || "MIT DABEI";
+    const title = labels?.sermonTitleWeekday || labels?.sermonTitleSunday || "WIR FEIERN GOTTESDIENST";
     const kidsLabel = labels?.sermonKids || "FÜR UNSERE KIDS & TEENS";
     const gastroLabel = labels?.sermonGastro || "KAFFEE & BEGEGNUNG";
+    const containerClass = "col-span-5 section-card p-8";
+
+    const pastorName = event?.services?.program?.find((svc) => svc.id === 24)?.person || "";
+    const rawPredigt = event?.predigtLine || "";
+    const cleanPredigt = rawPredigt.replace(/^\s*predigt[:\s-]*/i, "").trim();
+    const kidsServices = event?.services?.kids || [];
+    const groupedKids = kidsServices.filter((svc) => svc.id !== 136);
+    const teensService = kidsServices.find((svc) => svc.id === 136);
+    const kidsNames = groupedKids.map((svc) => svc.name).join(", ");
+    const kidsStart = groupedKids.find((svc) => svc.statusLabel)?.statusLabel || "";
 
     if (isLoading) {
         return (
-            <section className="col-span-5 p-0">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                    <Calendar className="text-church-yellow mr-4" size={32} />
-                    NÄCHSTER GOTTESDIENST
+            <section className={containerClass}>
+                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-start">
+                    <BookOpenText className="text-church-yellow mr-4" size={32} />
+                    {title}
                 </h2>
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
@@ -26,10 +35,10 @@ export default function NextService() {
 
     if (!event) {
         return (
-            <section className="col-span-5 p-0">
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                    <Calendar className="text-church-yellow mr-4" size={32} />
-                    NÄCHSTER GOTTESDIENST
+            <section className={containerClass}>
+                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-start">
+                    <BookOpenText className="text-church-yellow mr-4" size={32} />
+                    {title}
                 </h2>
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
                     <p className="text-xl-custom text-red-800">
@@ -41,20 +50,20 @@ export default function NextService() {
     }
 
     return (
-        <section className="col-span-5 section-card p-8">
-            <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-center">
-                <Calendar className="text-church-yellow mr-4" size={32} />
+        <section className={containerClass}>
+            <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-start">
+                <BookOpenText className="text-church-yellow mr-4" size={32} />
                 {title}
             </h2>
-            
+
             {event.imageUrl && (
-                <img 
-                    src={event.imageUrl} 
+                <img
+                    src={event.imageUrl}
                     alt={event.title}
-                    className="w-full h-64 object-cover rounded-lg mb-4" 
+                    className="w-full h-64 object-cover rounded-lg mb-4"
                 />
             )}
-            
+
             <div className="space-y-4">
                 {(() => {
                     const formatDate = (value?: string) => {
@@ -63,24 +72,25 @@ export default function NextService() {
                     };
                     const displayDate = formatDate(event.date);
                     return (
-                        <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
-                            <Clock className="text-church-yellow" size={20} />
+                        <div className="flex items-center space-x-3 text-2xl-custom font-medium text-gray-800">
                             <span>{displayDate} • {event.time}</span>
                         </div>
                     );
                 })()}
-                {event.location && (
-                    <div className="flex items-center space-x-3 text-xl-custom text-gray-600">
-                        <MapPin className="text-church-yellow" size={20} />
-                        <span>{event.location}</span>
-                    </div>
-                )}
-                {event.predigtLine && (
-                    <div className="flex items-center space-x-3 text-xl-custom text-gray-700 leading-relaxed">
-                        <BookOpenText className="text-church-yellow" size={20} />
-                        <span>{event.predigtLine}</span>
-                    </div>
-                )}
+                {(() => {
+                    const sermonText = pastorName && cleanPredigt
+                        ? `Predigt von ${pastorName} über: ${cleanPredigt}`
+                        : pastorName
+                            ? `Predigt von ${pastorName}`
+                            : cleanPredigt
+                                ? `Predigt: ${cleanPredigt}`
+                                : "";
+                    return sermonText ? (
+                        <div className="flex items-start space-x-3 text-xl-custom text-gray-700 leading-relaxed">
+                            <span>{sermonText}</span>
+                        </div>
+                    ) : null;
+                })()}
                 {event.specials && event.specials.length > 0 && (
                     <div className="space-y-2">
                         <h4 className="text-xl-custom font-semibold text-gray-800">Specials</h4>
@@ -97,111 +107,78 @@ export default function NextService() {
                     </p>
                 )}
 
-                {event.services && (
-                    <div className="space-y-3 pt-2">
-                        {event.services.program?.length > 0 && (
-                            <div className="pt-1 space-y-3">
-                                <h4 className="text-xl-custom font-semibold text-gray-800">{programLabel}</h4>
-                                {(() => {
-                                    const roleLabels: Record<number, string> = {
-                                        24: 'Predigt',
-                                        27: 'Moderation',
-                                        131: 'Ministry/Gebet',
-                                    };
-                                    const featured = event.services.program.filter((svc) => roleLabels[svc.id]);
-                                    const others = event.services.program.filter((svc) => !roleLabels[svc.id]);
-                                    return (
-                                        <>
-                                            {featured.length > 0 && (
-                                                <div className={`grid ${featured.length > 1 ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
-                                                    {featured.map((svc) => {
-                                                        const avatar = svc.avatar;
-                                                        return (
-                                                            <div
-                                                                key={svc.id}
-                                                                className="flex items-center gap-3 px-2 py-2"
-                                                            >
-                                                                <div className="w-10 h-10 rounded-full overflow-hidden bg-church-blue text-white flex items-center justify-center text-sm font-semibold">
-                                                                    {avatar ? (
-                                                                        <img
-                                                                            src={avatar}
-                                                                            alt={svc.person || roleLabels[svc.id]}
-                                                                            className="w-full h-full object-cover"
-                                                                        />
-                                                                    ) : (
-                                                                        <User size={16} />
-                                                                    )}
-                                                                </div>
-                                                                <div className="min-w-0">
-                                                                    <div className="text-sm uppercase tracking-wide text-gray-700 font-semibold">{roleLabels[svc.id]}</div>
-                                                                    <div className="text-sm text-gray-800 truncate">{svc.person || 'N.N.'}</div>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            )}
-                                            {others.length > 0 && (
-                                                <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                                                    {others.map((svc) => (
-                                                        <span
-                                                            key={svc.id}
-                                                            className="px-2 py-1 rounded-full bg-gray-100 border border-gray-200"
-                                                        >
-                                                            {svc.person || svc.name}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-                                })()}
-                            </div>
-                        )}
+                <div className="border-t-2 border-gray-200 my-6"></div>
 
-                        {event.services.kids?.length > 0 && (
-                            <div className="pt-1">
-                                <h4 className="text-xl-custom font-semibold text-gray-800">{kidsLabel}</h4>
-                                <div className="space-y-2 text-sm text-gray-700 mt-2">
-                                    {event.services.kids.map((svc) => (
-                                        <div key={svc.id} className="rounded-lg border border-gray-200 bg-white shadow-sm px-4 py-3">
-                                            <div className="font-semibold text-gray-800">
-                                                {svc.name}
-                                                {svc.description && <span className="text-gray-600 font-normal"> ({svc.description})</span>}
+                {event.services && (
+                    <div className="space-y-6 pt-2">
+                        {kidsServices && kidsServices.length > 0 && (
+                            <div className="pt-1 space-y-3">
+                                <h4 className="text-2xl-custom font-semibold text-gray-800">{kidsLabel}</h4>
+                                <div className="space-y-3 text-gray-700">
+                                    {groupedKids.length > 0 && (
+                                        <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                                            <div className="flex items-center space-x-4">
+                                                <div className="w-3 h-3 rounded-full bg-church-yellow mt-[10px]"></div>
+                                                <div>
+                                                    <div className="text-xl-custom font-medium text-gray-800">Kinderhüeti & Kidsträff</div>
+                                                    {kidsStart && <div className="text-lg text-gray-500">{kidsStart}</div>}
+                                                </div>
                                             </div>
-                                            {svc.statusLabel && <div className="text-gray-700">{svc.statusLabel}</div>}
                                         </div>
-                                    ))}
+                                    )}
+                                    {teensService && (
+                                        <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                                            <div className="flex items-center space-x-4">
+                                                <div className="w-3 h-3 rounded-full bg-church-yellow mt-[10px]"></div>
+                                                <div>
+                                                    <div className="text-xl-custom font-medium text-gray-800">{teensService.name}</div>
+                                                    {teensService.statusLabel && <div className="text-lg text-gray-500">{teensService.statusLabel}</div>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
 
+                        <div className="border-t-2 border-gray-200 my-6"></div>
+
                         {event.services.gastro && (
-                            <div className="pt-1">
-                                <h4 className="text-xl-custom font-semibold text-gray-800">{gastroLabel}</h4>
+                            <div className="pt-1 space-y-3">
+                                <h4 className="text-2xl-custom font-semibold text-gray-800">{gastroLabel}</h4>
                                 {event.services.gastro.length > 0 ? (
-                                    <div
-                                        className={`text-sm text-gray-700 w-full ${
-                                            event.services.gastro.length > 1 ? 'grid grid-cols-2 gap-3' : 'flex flex-wrap gap-3'
-                                        }`}
-                                    >
-                                        {event.services.gastro.map((svc) => (
-                                            <div
-                                                key={svc.id}
-                                                className={`px-3 py-2 rounded-lg border flex items-center justify-between gap-2 w-full ${
-                                                    svc.tone === 'green'
-                                                        ? 'bg-green-50 border-green-200 text-green-800'
-                                                        : svc.tone === 'yellow'
-                                                        ? 'bg-yellow-50 border-yellow-200 text-yellow-800'
-                                                        : svc.tone === 'red'
-                                                        ? 'bg-red-50 border-red-200 text-red-800'
-                                                        : 'bg-gray-100 border-gray-200 text-gray-500'
-                                                }`}
-                                            >
-                                                <span className="font-semibold">{svc.name}</span>
-                                                <span className="text-sm">{svc.label}</span>
-                                            </div>
-                                        ))}
+                                    <div className="space-y-3 text-gray-700">
+                                        {event.services.gastro
+                                            .slice()
+                                            .sort((a, b) => {
+                                                // Prioritize Kaffeebar (140) first
+                                                if (a.id === 140 && b.id !== 140) return -1;
+                                                if (b.id === 140 && a.id !== 140) return 1;
+                                                return a.id - b.id;
+                                            })
+                                            .map((svc) => {
+                                                const hasTeam = svc.status !== 'unavailable';
+                                                const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
+                                                return (
+                                                    <div
+                                                        key={svc.id}
+                                                        className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                                                    >
+                                                        <div className="flex items-center space-x-4">
+                                                            <div
+                                                                className="w-3 h-3 rounded-full mt-[10px]"
+                                                                style={{ backgroundColor: hasTeam ? '#facc15' : '#d1d5db' }}
+                                                            ></div>
+                                                            <div>
+                                                                <div className="text-xl-custom font-medium text-gray-800">{svc.name}</div>
+                                                                <div className="text-lg text-gray-500">
+                                                                    {hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt'}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                     </div>
                                 ) : (
                                     <div className="text-sm text-gray-600">Gastro nicht besetzt</div>
