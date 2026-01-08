@@ -8,7 +8,7 @@ export function UpcomingEvent() {
     return (
       <section className="col-span-5 section-card p-12">
         <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-          <Star className="text-church-yellow mr-4" size={32} />
+          <Star className="signage-icon text-church-yellow mr-4" size={32} />
           NÄCHSTE VERANSTALTUNG
         </h2>
         <div className="text-center py-8">
@@ -23,7 +23,7 @@ export function UpcomingEvent() {
     return (
       <section className="col-span-5 section-card p-12">
         <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-          <Star className="text-church-yellow mr-4" size={32} />
+          <Star className="signage-icon text-church-yellow mr-4" size={32} />
           NÄCHSTE VERANSTALTUNG
         </h2>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
@@ -38,7 +38,7 @@ export function UpcomingEvent() {
   return (
     <section className="col-span-5 section-card p-12">
       <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-        <Star className="text-church-yellow mr-4" size={32} />
+        <Star className="signage-icon text-church-yellow mr-4" size={32} />
         NÄCHSTE VERANSTALTUNG
       </h2>
 
@@ -53,11 +53,11 @@ export function UpcomingEvent() {
           {event.title}
         </h3>
         <div className="flex items-center space-x-3 text-xl text-gray-600">
-          <Calendar className="text-church-yellow" size={20} />
+          <Calendar className="signage-icon signage-icon-20 text-church-yellow" size={20} />
           <span>{event.date}</span>
         </div>
         <div className="flex items-center space-x-3 text-xl text-gray-600">
-          <Clock className="text-church-yellow" size={20} />
+          <Clock className="signage-icon signage-icon-20 text-church-yellow" size={20} />
           <span>{event.time}</span>
         </div>
         {event.description && (

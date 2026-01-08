@@ -29,7 +29,7 @@ export function RoomUsage() {
     return (
       <section className="col-span-7 section-card p-12">
         <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-          <Calendar className="text-church-yellow mr-4" size={32} />
+          <Calendar className="signage-icon text-church-yellow mr-4" size={32} />
           NÄCHSTE VERANSTALTUNG
         </h2>
         <div className="text-center py-8">
@@ -44,7 +44,7 @@ export function RoomUsage() {
     return (
       <section className="col-span-7 section-card p-12">
         <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-          <Calendar className="text-church-yellow mr-4" size={32} />
+          <Calendar className="signage-icon text-church-yellow mr-4" size={32} />
           NÄCHSTE VERANSTALTUNG
         </h2>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
@@ -59,14 +59,14 @@ export function RoomUsage() {
   return (
     <section className="col-span-7 section-card p-12">
       <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-        <Calendar className="text-church-yellow mr-4" size={32} />
+        <Calendar className="signage-icon text-church-yellow mr-4" size={32} />
         NÄCHSTE VERANSTALTUNG
       </h2>
       
       {/* Today's bookings section */}
       <div className="mb-8">
         <h3 className="text-2xl font-medium text-gray-700 mb-4 flex items-center">
-          <Clock className="text-church-yellow mr-3" size={24} />
+          <Clock className="signage-icon signage-icon-24 text-church-yellow mr-3" size={24} />
           Heute
         </h3>
         <div className="space-y-3">
@@ -103,7 +103,7 @@ export function RoomUsage() {
         {/* Upcoming bookings section */}
       <div>
         <h3 className="text-2xl font-medium text-gray-700 mb-4 flex items-center">
-          <Calendar className="text-church-yellow mr-3" size={24} />
+          <Calendar className="signage-icon signage-icon-24 text-church-yellow mr-3" size={24} />
           Anstehend
         </h3>
         <div className="space-y-3">

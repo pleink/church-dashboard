@@ -40,7 +40,7 @@ export default function NextEvents({ className }: Props) {
         return (
             <section className={containerClass}>
                 <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-                    <Calendar className="text-church-yellow mr-4 " size={32} />
+                    <Calendar className="signage-icon text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="text-center py-8">
@@ -55,7 +55,7 @@ export default function NextEvents({ className }: Props) {
         return (
             <section className={containerClass}>
                 <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-                    <Calendar className="text-church-yellow mr-4" size={32} />
+                    <Calendar className="signage-icon text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="text-center py-8">
@@ -69,7 +69,7 @@ export default function NextEvents({ className }: Props) {
     return (
         <section className={containerClass}>
             <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-                <Calendar className="text-church-yellow mr-4" size={32} />
+                <Calendar className="signage-icon text-church-yellow mr-4" size={32} />
                 {title}
             </h2>
             <div className="space-y-6">
@@ -79,9 +79,9 @@ export default function NextEvents({ className }: Props) {
                         <div className="space-y-3">
                             {sortedToday.map((appointment) => (
                                 <div key={`today-${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                    <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-6">
                                         <div
-                                            className="w-3 h-3 rounded-full"
+                                            className="w-3 h-3 mr-2 flex-shrink-0 rounded-full"
                                             style={{ backgroundColor: appointment.color || '#facc15' }}
                                         ></div>
                                         <div className="space-y-1">
@@ -120,9 +120,9 @@ export default function NextEvents({ className }: Props) {
                         <div className="space-y-3">
                             {sortedUpcoming.map((appointment) => (
                                 <div key={`upcoming-${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                    <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-6">
                                         <div
-                                            className="w-3 h-3 flex-shrink-0 rounded-full"
+                                            className="w-3 h-3 mr-2 flex-shrink-0 rounded-full"
                                             style={{ backgroundColor: appointment.color || '#facc15' }}
                                         ></div>
                                         <div className="space-y-1">

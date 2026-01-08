@@ -14,7 +14,7 @@ export default function NextServiceSunday() {
         return (
             <section className={containerClass}>
                 <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-                    <BookOpenText className="text-church-yellow mr-4" size={32} />
+                    <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="text-center py-8">
@@ -29,7 +29,7 @@ export default function NextServiceSunday() {
         return (
             <section className={containerClass}>
                 <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-                    <BookOpenText className="text-church-yellow mr-4" size={32} />
+                    <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
@@ -44,7 +44,7 @@ export default function NextServiceSunday() {
     return (
         <section className={containerClass}>
             <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-                <BookOpenText className="text-church-yellow mr-4" size={32} />
+                <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
                 {title}
             </h2>
 
@@ -127,7 +127,7 @@ export default function NextServiceSunday() {
                                                                             className="w-full h-full object-cover"
                                                                         />
                                                                     ) : (
-                                                                        <User size={24} />
+                                                                        <User className="signage-icon signage-icon-24" size={24} />
                                                                     )}
                                                                 </div>
                                                                 <div className="min-w-0">

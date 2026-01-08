@@ -10,7 +10,7 @@ export function Tagesvers() {
     return (
       <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
         <h2 className="text-4xl font-semibold mb-8 flex items-center">
-          <Book className="text-church-yellow mr-4" size={32} />
+          <Book className="signage-icon text-church-yellow mr-4" size={32} />
           {title}
         </h2>
         <div className="text-center py-8">
@@ -25,7 +25,7 @@ export function Tagesvers() {
     return (
       <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
         <h2 className="text-4xl font-semibold mb-8 flex items-center">
-          <Book className="text-church-yellow mr-4" size={32} />
+          <Book className="signage-icon text-church-yellow mr-4" size={32} />
           {title}
         </h2>
         <div className="space-y-6">
@@ -37,7 +37,7 @@ export function Tagesvers() {
           </cite>
         </div>
         <div className="mt-8 flex justify-end">
-          <Book className="text-6xl text-church-yellow opacity-20" size={96} />
+          <Book className="signage-icon signage-icon-96 text-6xl text-church-yellow opacity-20" size={96} />
         </div>
       </section>
     );
@@ -46,7 +46,7 @@ export function Tagesvers() {
   return (
     <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
       <h2 className="text-4xl font-semibold mb-6 flex items-center">
-        <Book className="text-church-yellow mr-4" size={32} />
+        <Book className="signage-icon text-church-yellow mr-4" size={32} />
         {title}
       </h2>
 
@@ -60,7 +60,7 @@ export function Tagesvers() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Book className="text-4xl text-church-yellow opacity-20" size={64} />
+        <Book className="signage-icon signage-icon-64 text-4xl text-church-yellow opacity-20" size={64} />
       </div>
     </section>
   );

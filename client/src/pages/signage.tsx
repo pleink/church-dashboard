@@ -8,7 +8,7 @@ import { FlyerCarousel } from "@/components/signage/FlyerCarousel.tsx";
 
 export default function Signage() {
     const today = new Date();
-    const isSunday = true;
+    const isSunday = false;
 
     return (
         <div className="signage-container mx-auto bg-gray-50 overflow-hidden min-h-screen flex flex-col">
