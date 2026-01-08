@@ -35,7 +35,7 @@ export function FlyerCarousel() {
         <section className="col-span-12 section-card p-4 w-full">
             <div className="text-center py-8">
                 <span className="loading loading-ring loading-lg text-church-blue"></span>
-                <p className="text-xl-custom text-gray-600 mt-4">Lade Flyer...</p>
+                <p className="text-xl text-gray-600 mt-4">Lade Flyer...</p>
             </div>
         </section>
         );
@@ -45,7 +45,7 @@ export function FlyerCarousel() {
         return (
         <section className="col-span-12 section-card p-4 w-full">
             <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
-                <p className="text-xl-custom text-red-800">
+                <p className="text-xl text-red-800">
                     Fehler beim Laden der Flyer.
                 </p>
             </div>
@@ -58,7 +58,7 @@ export function FlyerCarousel() {
         <section className="col-span-12 section-card p-4 w-full">
             <div className="text-center py-12">
                 <Image className="mx-auto h-16 w-16 text-gray-400 mb-6" />
-                <p className="text-xl-custom text-gray-500">
+                <p className="text-xl text-gray-500">
                     Derzeit keine Flyer verfügbar.
                 </p>
             </div>
@@ -84,7 +84,7 @@ export function FlyerCarousel() {
                                     }}
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                                    <h3 className="text-xl-custom font-semibold text-white">
+                                    <h3 className="text-xl font-semibold text-white">
                                         {flyer.title}
                                     </h3>
                                 </div>

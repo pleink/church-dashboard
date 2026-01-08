@@ -51,7 +51,7 @@ export function Header() {
         <div className="text-6xl font-bold text-church-blue time-display font-mono">
           {timeString}
         </div>
-        <div className="text-2xl-custom text-gray-600 mt-2">
+        <div className="text-2xl text-gray-600 mt-2">
           {dateString}
         </div>
       </div>

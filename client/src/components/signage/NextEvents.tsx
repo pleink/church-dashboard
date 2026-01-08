@@ -39,13 +39,13 @@ export default function NextEvents({ className }: Props) {
     if (isLoadingToday || isLoadingUpcoming) {
         return (
             <section className={containerClass}>
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
-                    <Calendar className="text-church-yellow mr-4" size={32} />
+                <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
+                    <Calendar className="text-church-yellow mr-4 " size={32} />
                     {title}
                 </h2>
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
-                    <p className="text-xl-custom text-gray-600 mt-4">Lade Termine...</p>
+                    <p className="text-xl text-gray-600 mt-4">Lade Termine...</p>
                 </div>
             </section>
         );
@@ -54,13 +54,13 @@ export default function NextEvents({ className }: Props) {
     if (sortedToday.length === 0 && sortedUpcoming.length === 0) {
         return (
             <section className={containerClass}>
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
+                <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
                     <Calendar className="text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="text-center py-8">
                     <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-xl-custom text-gray-500">Keine Veranstaltung gefunden</p>
+                    <p className="text-xl text-gray-500">Keine Veranstaltung gefunden</p>
                 </div>
             </section>
         );
@@ -68,14 +68,14 @@ export default function NextEvents({ className }: Props) {
 
     return (
         <section className={containerClass}>
-            <h2 className="text-3xl-custom font-semibold text-church-blue mb-8 flex items-center">
+            <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
                 <Calendar className="text-church-yellow mr-4" size={32} />
                 {title}
             </h2>
             <div className="space-y-6">
                 {sortedToday.length > 0 && (
                     <div>
-                        <h3 className="text-2xl-custom font-semibold text-gray-800 mb-3">{todayLabel}</h3>
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">{todayLabel}</h3>
                         <div className="space-y-3">
                             {sortedToday.map((appointment) => (
                                 <div key={`today-${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
@@ -85,7 +85,7 @@ export default function NextEvents({ className }: Props) {
                                             style={{ backgroundColor: appointment.color || '#facc15' }}
                                         ></div>
                                         <div className="space-y-1">
-                                            <span className="text-xl-custom font-medium text-gray-800 leading-tight">
+                                            <span className="text-xl font-medium text-gray-800 leading-tight">
                                                 {appointment.title || 'Privater Termin'}
                                             </span>
                                             {appointment.location || appointment.resource ? (
@@ -96,7 +96,7 @@ export default function NextEvents({ className }: Props) {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl-custom text-gray-600 font-medium whitespace-nowrap">
+                                        <div className="text-xl text-gray-600 font-medium whitespace-nowrap">
                                             {appointment.startTime}–{appointment.endTime}
                                         </div>
                                         {appointment.date && (
@@ -116,22 +116,22 @@ export default function NextEvents({ className }: Props) {
                         {sortedToday.length > 0 && (
                             <div className="border-t-2 border-gray-200 my-6" />
                         )}
-                        <h3 className="text-2xl-custom font-semibold text-gray-800 mb-3">{upcomingLabel}</h3>
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">{upcomingLabel}</h3>
                         <div className="space-y-3">
                             {sortedUpcoming.map((appointment) => (
                                 <div key={`upcoming-${appointment.churchToolsId}-${appointment.calendarId}`} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
                                     <div className="flex items-center space-x-4">
                                         <div
-                                            className="w-3 h-3 rounded-full"
+                                            className="w-3 h-3 flex-shrink-0 rounded-full"
                                             style={{ backgroundColor: appointment.color || '#facc15' }}
                                         ></div>
                                         <div className="space-y-1">
                                             {appointment.isPublic && appointment.title ? (
-                                                <span className="text-xl-custom font-medium text-gray-800 leading-tight">
+                                                <span className="text-xl font-medium text-gray-800 leading-tight">
                                                     {appointment.title}
                                                 </span>
                                             ) : (
-                                                <span className="text-xl-custom font-medium text-gray-500 italic leading-tight">
+                                                <span className="text-xl font-medium text-gray-500 italic leading-tight">
                                                     Privater Termin
                                                 </span>
                                             )}
@@ -143,7 +143,7 @@ export default function NextEvents({ className }: Props) {
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl-custom text-gray-600 font-medium whitespace-nowrap">
+                                        <div className="text-xl text-gray-600 font-medium whitespace-nowrap">
                                             {appointment.startTime}–{appointment.endTime}
                                         </div>
                                         {appointment.date && (

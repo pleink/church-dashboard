@@ -7,7 +7,7 @@ export default function NextServiceWeekday() {
     const title = labels?.sermonTitleWeekday || labels?.sermonTitleSunday || "WIR FEIERN GOTTESDIENST";
     const kidsLabel = labels?.sermonKids || "FÜR UNSERE KIDS & TEENS";
     const gastroLabel = labels?.sermonGastro || "KAFFEE & BEGEGNUNG";
-    const containerClass = "col-span-5 section-card p-8";
+    const containerClass = "col-span-5 section-card p-12";
 
     const pastorName = event?.services?.program?.find((svc) => svc.id === 24)?.person || "";
     const rawPredigt = event?.predigtLine || "";
@@ -21,13 +21,13 @@ export default function NextServiceWeekday() {
     if (isLoading) {
         return (
             <section className={containerClass}>
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-start">
+                <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-start">
                     <BookOpenText className="text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
-                    <p className="text-xl-custom text-gray-600 mt-4">Lade Gottesdienst...</p>
+                    <p className="text-xl text-gray-600 mt-4">Lade Gottesdienst...</p>
                 </div>
             </section>
         );
@@ -36,12 +36,12 @@ export default function NextServiceWeekday() {
     if (!event) {
         return (
             <section className={containerClass}>
-                <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-start">
+                <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-start">
                     <BookOpenText className="text-church-yellow mr-4" size={32} />
                     {title}
                 </h2>
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
-                    <p className="text-xl-custom text-red-800">
+                    <p className="text-xl text-red-800">
                         Keine bevorstehenden Gottesdienste gefunden.
                     </p>
                 </div>
@@ -51,7 +51,7 @@ export default function NextServiceWeekday() {
 
     return (
         <section className={containerClass}>
-            <h2 className="text-3xl-custom font-semibold text-church-blue mb-6 flex items-start">
+            <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-start">
                 <BookOpenText className="text-church-yellow mr-4" size={32} />
                 {title}
             </h2>
@@ -72,7 +72,7 @@ export default function NextServiceWeekday() {
                     };
                     const displayDate = formatDate(event.date);
                     return (
-                        <div className="flex items-center space-x-3 text-2xl-custom font-medium text-gray-800">
+                        <div className="flex items-center space-x-3 text-2xl font-medium text-gray-800">
                             <span>{displayDate} • {event.time}</span>
                         </div>
                     );
@@ -86,14 +86,14 @@ export default function NextServiceWeekday() {
                                 ? `Predigt: ${cleanPredigt}`
                                 : "";
                     return sermonText ? (
-                        <div className="flex items-start space-x-3 text-xl-custom text-gray-700 leading-relaxed">
+                        <div className="flex items-start space-x-3 text-xl text-gray-700 leading-relaxed">
                             <span>{sermonText}</span>
                         </div>
                     ) : null;
                 })()}
                 {event.specials && event.specials.length > 0 && (
                     <div className="space-y-2">
-                        <h4 className="text-xl-custom font-semibold text-gray-800">Specials</h4>
+                        <h4 className="text-xl font-semibold text-gray-800">Specials</h4>
                         <ul className="list-disc list-inside text-lg text-gray-700">
                             {event.specials.map((line, idx) => (
                                 <li key={idx}>{line}</li>
@@ -102,7 +102,7 @@ export default function NextServiceWeekday() {
                     </div>
                 )}
                 {!event.predigtLine && !event.specials?.length && event.description && (
-                    <p className="text-xl-custom text-gray-700 leading-relaxed">
+                    <p className="text-xl text-gray-700 leading-relaxed">
                         {event.description}
                     </p>
                 )}
@@ -113,14 +113,14 @@ export default function NextServiceWeekday() {
                     <div className="space-y-6 pt-2">
                         {kidsServices && kidsServices.length > 0 && (
                             <div className="pt-1 space-y-3">
-                                <h4 className="text-2xl-custom font-semibold text-gray-800">{kidsLabel}</h4>
+                                <h4 className="text-2xl font-semibold text-gray-800">{kidsLabel}</h4>
                                 <div className="space-y-3 text-gray-700">
                                     {groupedKids.length > 0 && (
                                         <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
                                             <div className="flex items-center space-x-4">
                                                 <div className="w-3 h-3 rounded-full bg-church-yellow mt-[10px]"></div>
                                                 <div>
-                                                    <div className="text-xl-custom font-medium text-gray-800">Kinderhüeti & Kidsträff</div>
+                                                    <div className="text-xl font-medium text-gray-800">Kinderhüeti & Kidsträff</div>
                                                     {kidsStart && <div className="text-lg text-gray-500">{kidsStart}</div>}
                                                 </div>
                                             </div>
@@ -131,7 +131,7 @@ export default function NextServiceWeekday() {
                                             <div className="flex items-center space-x-4">
                                                 <div className="w-3 h-3 rounded-full bg-church-yellow mt-[10px]"></div>
                                                 <div>
-                                                    <div className="text-xl-custom font-medium text-gray-800">{teensService.name}</div>
+                                                    <div className="text-xl font-medium text-gray-800">{teensService.name}</div>
                                                     {teensService.statusLabel && <div className="text-lg text-gray-500">{teensService.statusLabel}</div>}
                                                 </div>
                                             </div>
@@ -145,7 +145,7 @@ export default function NextServiceWeekday() {
 
                         {event.services.gastro && (
                             <div className="pt-1 space-y-3">
-                                <h4 className="text-2xl-custom font-semibold text-gray-800">{gastroLabel}</h4>
+                                <h4 className="text-2xl font-semibold text-gray-800">{gastroLabel}</h4>
                                 {event.services.gastro.length > 0 ? (
                                     <div className="space-y-3 text-gray-700">
                                         {event.services.gastro
@@ -170,7 +170,7 @@ export default function NextServiceWeekday() {
                                                                 style={{ backgroundColor: hasTeam ? '#facc15' : '#d1d5db' }}
                                                             ></div>
                                                             <div>
-                                                                <div className="text-xl-custom font-medium text-gray-800">{svc.name}</div>
+                                                                <div className="text-xl font-medium text-gray-800">{svc.name}</div>
                                                                 <div className="text-lg text-gray-500">
                                                                     {hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt'}
                                                                 </div>

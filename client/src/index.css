@@ -26,10 +26,17 @@
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
-  
+
   /* Church specific colors */
   --church-blue: hsl(211, 70%, 30%);
   --church-yellow: hsl(48, 100%, 56%);
+}
+
+:root {
+  --design-width: 1440;
+  /* Scale base font relative to viewport width; clamp to sensible range */
+  --screen-scale: calc(100vw / var(--design-width));
+  font-size: clamp(20px, calc(20px * var(--screen-scale)), 200px);
 }
 
 .dark {
@@ -72,7 +79,7 @@
     display: inline-block;
     vertical-align: middle;
   }
-  
+
   .loading.loading-ring {
     width: 1.5rem;
     height: 1.5rem;
@@ -82,17 +89,18 @@
     border-right: 2px solid currentColor;
     animation: loading-ring 1s linear infinite;
   }
-  
+
   .loading.loading-lg {
     width: 3rem;
     height: 3rem;
     border-width: 3px;
   }
-  
+
   @keyframes loading-ring {
     from {
       transform: rotate(0deg);
     }
+
     to {
       transform: rotate(360deg);
     }
@@ -125,22 +133,22 @@
 
 /* Custom font sizes for 4K display */
 .text-4xl-custom {
-  font-size: 48px;
+  font-size: 3rem;
   line-height: 1.1;
 }
 
 .text-3xl-custom {
-  font-size: 32px;
+  font-size: 2rem;
   line-height: 1.2;
 }
 
 .text-2xl-custom {
-  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 1.3;
 }
 
 .text-xl-custom {
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 1.4;
 }
 
@@ -180,6 +188,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -192,4 +201,3 @@
     margin: 0 auto;
   }
 }
-
