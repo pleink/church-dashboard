@@ -1,5 +1,6 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
-import { Calendar, Clock, MapPin, BookOpenText, User } from "lucide-react";
+import { BookOpenText } from "lucide-react";
+import { SignageListRow } from "./SignageListRow";
 
 export default function NextServiceWeekday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -116,26 +117,22 @@ export default function NextServiceWeekday() {
                                 <h4 className="text-2xl font-semibold text-gray-800">{kidsLabel}</h4>
                                 <div className="space-y-3 text-gray-700">
                                     {groupedKids.length > 0 && (
-                                        <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                            <div className="flex items-center space-x-4">
-                                                <div className="w-3 h-3 rounded-full bg-church-yellow mt-[10px]"></div>
-                                                <div>
-                                                    <div className="text-xl font-medium text-gray-800">Kinderhüeti & Kidsträff</div>
-                                                    {kidsStart && <div className="text-lg text-gray-500">{kidsStart}</div>}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <SignageListRow
+                                            color="#facc15"
+                                            title="Kinderhüeti & Kidsträff"
+                                            subtitle={kidsStart}
+                                            rightPrimary={null}
+                                            rightSecondary={null}
+                                        />
                                     )}
                                     {teensService && (
-                                        <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                                            <div className="flex items-center space-x-4">
-                                                <div className="w-3 h-3 rounded-full bg-church-yellow mt-[10px]"></div>
-                                                <div>
-                                                    <div className="text-xl font-medium text-gray-800">{teensService.name}</div>
-                                                    {teensService.statusLabel && <div className="text-lg text-gray-500">{teensService.statusLabel}</div>}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <SignageListRow
+                                            color="#facc15"
+                                            title={teensService.name}
+                                            subtitle={teensService.statusLabel}
+                                            rightPrimary={null}
+                                            rightSecondary={null}
+                                        />
                                     )}
                                 </div>
                             </div>
@@ -160,23 +157,14 @@ export default function NextServiceWeekday() {
                                                 const hasTeam = svc.status !== 'unavailable';
                                                 const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
                                                 return (
-                                                    <div
+                                                    <SignageListRow
                                                         key={svc.id}
-                                                        className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
-                                                    >
-                                                        <div className="flex items-center space-x-4">
-                                                            <div
-                                                                className="w-3 h-3 rounded-full mt-[10px]"
-                                                                style={{ backgroundColor: hasTeam ? '#facc15' : '#d1d5db' }}
-                                                            ></div>
-                                                            <div>
-                                                                <div className="text-xl font-medium text-gray-800">{svc.name}</div>
-                                                                <div className="text-lg text-gray-500">
-                                                                    {hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt'}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                        color={hasTeam ? '#facc15' : '#d1d5db'}
+                                                        title={svc.name}
+                                                        subtitle={hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt'}
+                                                        rightPrimary={null}
+                                                        rightSecondary={null}
+                                                    />
                                                 );
                                             })}
                                     </div>
