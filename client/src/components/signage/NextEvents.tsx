@@ -1,6 +1,6 @@
 import { useTodayAppointments, useUpcomingAppointments, useSignageLabels } from "../../hooks/use-signage-data";
 import { Calendar } from "lucide-react";
-import { SignageListRow } from "./SignageListRow";
+import { SignageList } from "./SignageList";
 
 type Props = {
     className?: string;
@@ -76,41 +76,35 @@ export default function NextEvents({ className }: Props) {
             <div className="space-y-6">
                 {sortedToday.length > 0 && (
                     <div>
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">{todayLabel}</h3>
-                        <div className="space-y-3">
-                            {sortedToday.map((appointment) => (
-                                <SignageListRow
-                                    key={`today-${appointment.churchToolsId}-${appointment.calendarId}`}
-                                    color={appointment.color || '#facc15'}
-                                    title={appointment.title || 'Privater Termin'}
-                                    subtitle={appointment.location || appointment.resource}
-                                    rightPrimary={[appointment.startTime, appointment.endTime].filter(Boolean).join("–") || undefined}
-                                    rightSecondary={appointment.date}
-                                />
-                            ))}
-                        </div>
+                        <SignageList
+                            title={todayLabel}
+                            items={sortedToday.map((appointment) => ({
+                                key: `today-${appointment.churchToolsId}-${appointment.calendarId}`,
+                                color: appointment.color || '#facc15',
+                                title: appointment.title || 'Privater Termin',
+                                subtitle: appointment.location || appointment.resource,
+                                rightPrimary: [appointment.startTime, appointment.endTime].filter(Boolean).join("–") || undefined,
+                                rightSecondary: appointment.date,
+                            }))}
+                            showEndDivider={sortedUpcoming.length > 0}
+                        />
                     </div>
                 )}
 
                 {sortedUpcoming.length > 0 && (
                     <div>
-                        {sortedToday.length > 0 && (
-                            <div className="border-t-2 border-gray-200 my-6" />
-                        )}
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-3">{upcomingLabel}</h3>
-                        <div className="space-y-3">
-                            {sortedUpcoming.map((appointment) => (
-                                <SignageListRow
-                                    key={`upcoming-${appointment.churchToolsId}-${appointment.calendarId}`}
-                                    color={appointment.color || '#facc15'}
-                                    title={appointment.isPublic && appointment.title ? appointment.title : 'Privater Termin'}
-                                    titleClassName={`text-xl font-medium leading-tight ${appointment.isPublic && appointment.title ? 'text-gray-800' : 'text-gray-500 italic'}`}
-                                    subtitle={appointment.location || appointment.resource}
-                                    rightPrimary={[appointment.startTime, appointment.endTime].filter(Boolean).join("–") || undefined}
-                                    rightSecondary={appointment.date}
-                                />
-                            ))}
-                        </div>
+                        <SignageList
+                            title={upcomingLabel}
+                            items={sortedUpcoming.map((appointment) => ({
+                                key: `upcoming-${appointment.churchToolsId}-${appointment.calendarId}`,
+                                color: appointment.color || '#facc15',
+                                title: appointment.isPublic && appointment.title ? appointment.title : 'Privater Termin',
+                                titleClassName: `text-xl font-medium leading-tight ${appointment.isPublic && appointment.title ? 'text-gray-800' : 'text-gray-500 italic'}`,
+                                subtitle: appointment.location || appointment.resource,
+                                rightPrimary: [appointment.startTime, appointment.endTime].filter(Boolean).join("–") || undefined,
+                                rightSecondary: appointment.date,
+                            }))}
+                        />
                     </div>
                 )}
             </div>

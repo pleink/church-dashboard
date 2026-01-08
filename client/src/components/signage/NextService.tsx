@@ -1,6 +1,6 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
 import { BookOpenText } from "lucide-react";
-import { SignageListRow } from "./SignageListRow";
+import { SignageList } from "./SignageList";
 
 export default function NextServiceWeekday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -16,7 +16,6 @@ export default function NextServiceWeekday() {
     const kidsServices = event?.services?.kids || [];
     const groupedKids = kidsServices.filter((svc) => svc.id !== 136);
     const teensService = kidsServices.find((svc) => svc.id === 136);
-    const kidsNames = groupedKids.map((svc) => svc.name).join(", ");
     const kidsStart = groupedKids.find((svc) => svc.statusLabel)?.statusLabel || "";
 
     if (isLoading) {
@@ -113,65 +112,51 @@ export default function NextServiceWeekday() {
                 {event.services && (
                     <div className="space-y-6 pt-2">
                         {kidsServices && kidsServices.length > 0 && (
-                            <div className="pt-1 space-y-3">
-                                <h4 className="text-2xl font-semibold text-gray-800">{kidsLabel}</h4>
-                                <div className="space-y-3 text-gray-700">
-                                    {groupedKids.length > 0 && (
-                                        <SignageListRow
-                                            color="#facc15"
-                                            title="Kinderhüeti & Kidsträff"
-                                            subtitle={kidsStart}
-                                            rightPrimary={null}
-                                            rightSecondary={null}
-                                        />
-                                    )}
-                                    {teensService && (
-                                        <SignageListRow
-                                            color="#facc15"
-                                            title={teensService.name}
-                                            subtitle={teensService.statusLabel}
-                                            rightPrimary={null}
-                                            rightSecondary={null}
-                                        />
-                                    )}
-                                </div>
-                            </div>
+                            <SignageList
+                                title={kidsLabel}
+                                items={[
+                                    ...(groupedKids.length > 0
+                                        ? [{
+                                            key: 'kids-grouped',
+                                            color: '#facc15',
+                                            title: 'Kinderhüeti & Kidsträff',
+                                            subtitle: kidsStart,
+                                        }]
+                                        : []),
+                                    ...(teensService
+                                        ? [{
+                                            key: teensService.id || 'teens',
+                                            color: '#facc15',
+                                            title: teensService.name,
+                                            subtitle: teensService.statusLabel,
+                                        }]
+                                        : []),
+                                ]}
+                                showEndDivider={Boolean(event.services.gastro && event.services.gastro.length > 0)}
+                            />
                         )}
 
-                        <div className="border-t-2 border-gray-200 my-6"></div>
-
                         {event.services.gastro && (
-                            <div className="pt-1 space-y-3">
-                                <h4 className="text-2xl font-semibold text-gray-800">{gastroLabel}</h4>
-                                {event.services.gastro.length > 0 ? (
-                                    <div className="space-y-3 text-gray-700">
-                                        {event.services.gastro
-                                            .slice()
-                                            .sort((a, b) => {
-                                                // Prioritize Kaffeebar (140) first
-                                                if (a.id === 140 && b.id !== 140) return -1;
-                                                if (b.id === 140 && a.id !== 140) return 1;
-                                                return a.id - b.id;
-                                            })
-                                            .map((svc) => {
-                                                const hasTeam = svc.status !== 'unavailable';
-                                                const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
-                                                return (
-                                                    <SignageListRow
-                                                        key={svc.id}
-                                                        color={hasTeam ? '#facc15' : '#d1d5db'}
-                                                        title={svc.name}
-                                                        subtitle={hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt'}
-                                                        rightPrimary={null}
-                                                        rightSecondary={null}
-                                                    />
-                                                );
-                                            })}
-                                    </div>
-                                ) : (
-                                    <div className="text-sm text-gray-600">Gastro nicht besetzt</div>
-                                )}
-                            </div>
+                            <SignageList
+                                title={gastroLabel}
+                                items={event.services.gastro
+                                    .slice()
+                                    .sort((a, b) => {
+                                        if (a.id === 140 && b.id !== 140) return -1;
+                                        if (b.id === 140 && a.id !== 140) return 1;
+                                        return a.id - b.id;
+                                    })
+                                    .map((svc) => {
+                                        const hasTeam = svc.status !== 'unavailable';
+                                        const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
+                                        return {
+                                            key: svc.id,
+                                            color: hasTeam ? '#facc15' : '#d1d5db',
+                                            title: svc.name,
+                                            subtitle: hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt',
+                                        };
+                                    })}
+                            />
                         )}
                     </div>
                 )}

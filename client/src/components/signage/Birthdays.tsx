@@ -40,7 +40,7 @@ export function Birthdays() {
   return (
     <section className="col-span-7 section-card p-12">
       <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-        <Cake className="signage-icon text-church-yellow mr-4" size={32} />
+        <Cake className="signage-icon text-church-yellow mr-4 flex-shrink-0" size={32} />
         {title}
       </h2>
 

@@ -1,5 +1,6 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
-import { Calendar, Clock, MapPin, BookOpenText, User } from "lucide-react";
+import { BookOpenText, User } from "lucide-react";
+import { SignageList } from "./SignageList";
 
 export default function NextServiceSunday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -184,31 +185,27 @@ export default function NextServiceSunday() {
 
                         {event.services.gastro && (
                             <div className="pt-6">
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-3">{gastroLabel}</h3>
                                 {event.services.gastro.length > 0 ? (
-                                    <div
-                                        className={`text-sm text-gray-700 w-full ${event.services.gastro.length > 1 ? 'grid grid-cols-2 gap-3' : 'flex flex-wrap gap-3'
-                                            }`}
-                                    >
-                                        {event.services.gastro.map((svc) => (
-                                            <div
-                                                key={svc.id}
-                                                className={`px-3 py-2 rounded-lg border flex items-center justify-between gap-2 w-full ${svc.tone === 'green'
-                                                    ? 'bg-green-50 border-green-200 text-green-800'
-                                                    : svc.tone === 'yellow'
-                                                        ? 'bg-yellow-50 border-yellow-200 text-yellow-800'
-                                                        : svc.tone === 'red'
-                                                            ? 'bg-red-50 border-red-200 text-red-800'
-                                                            : 'bg-gray-100 border-gray-200 text-gray-500'
-                                                    }`}
-                                            >
-                                                <span className="font-semibold">{svc.name}</span>
-                                                <span className="text-sm">{svc.label}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <SignageList
+                                        title={gastroLabel}
+                                        items={event.services.gastro.map((svc) => {
+                                            const toneColor = svc.tone === 'green'
+                                                ? '#22c55e'
+                                                : svc.tone === 'yellow'
+                                                    ? '#facc15'
+                                                    : svc.tone === 'red'
+                                                        ? '#ef4444'
+                                                        : '#d1d5db';
+                                            return {
+                                                key: svc.id,
+                                                color: toneColor,
+                                                title: svc.name,
+                                                rightPrimary: svc.label,
+                                            };
+                                        })}
+                                    />
                                 ) : (
-                                    <div className="text-sm text-gray-600">Gastro nicht besetzt</div>
+                                    <div className="text-sm text-gray-600">{gastroLabel} nicht besetzt</div>
                                 )}
                             </div>
                         )}

@@ -42,7 +42,7 @@ export function Header() {
           <img
             src={logoPath}
             alt="Freie Kirche Wipkingen Logo"
-            className="h-24 w-auto object-contain"
+            className="h-32 w-auto object-contain"
           />
         </div>
       </div>
