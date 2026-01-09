@@ -8,6 +8,7 @@ export default function NextServiceSunday() {
     const { data: labels } = useSignageLabels();
     const title = labels?.sermonTitleSunday || labels?.sermonTitleWeekday || "WIR FEIERN GOTTESDIENST";
     const programLabel = labels?.sermonProgram || "MIT DABEI";
+    const programSubtitle = labels?.sermonProgramSub;
     const kidsLabel = labels?.sermonKids || "FÜR UNSERE KIDS & TEENS";
     const gastroLabel = labels?.sermonGastro || "KAFFEE & BEGEGNUNG";
     const containerClass = "col-span-7 section-card p-12";
@@ -105,7 +106,10 @@ export default function NextServiceSunday() {
                     <div className="space-y-3 pt-6">
                         {event.services.program?.length > 0 && (
                             <div className="pt-1 space-y-3">
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-3">{programLabel}</h3>
+                                <div>
+                                    <h3 className="text-2xl font-semibold text-gray-800 mb-1">{programLabel}</h3>
+                                    <div className="text-gray-600 font-light mb-2">{programSubtitle}</div>
+                                </div>
                                 {(() => {
                                     const roleLabels: Record<number, string> = {
                                         24: 'Predigt',
@@ -201,11 +205,14 @@ export default function NextServiceSunday() {
                                                     : svc.tone === 'red'
                                                         ? '#ef4444'
                                                         : '#d1d5db';
+                                            const hours = svc.id === 140 ? '09:30–09:55' : svc.id === 127 ? '11:30–13:00' : undefined;
+                                            const isStaffed = svc.status !== 'unavailable';
+                                            const openText = hours ? `öffnet um ${hours.split('–')[0]}` : undefined;
                                             return {
                                                 key: svc.id,
                                                 color: toneColor,
                                                 title: svc.name,
-                                                rightPrimary: svc.label,
+                                                rightPrimary: isStaffed ? (openText || svc.label || 'Verfügbar') : (svc.label || 'Nicht besetzt'),
                                             };
                                         })}
                                     />

@@ -91,6 +91,7 @@ interface SignageLabels {
   sermonTitleSunday: string;
   sermonTitleWeekday: string;
   sermonProgram: string;
+  sermonProgramSub: string;
   sermonKids: string;
   sermonGastro: string;
   birthdaysTitle: string;

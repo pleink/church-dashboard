@@ -52,9 +52,9 @@
     },
     "kidsStatus": {
       "kidsDrin": "Gemeinsamer Start im Gottesdienst",
-      "kidsDraussen": "Treffpunkt im OG",
+      "kidsDraussen": "Treffpunkt um 10:00 im OG",
       "teensDrin": "Gemeinsamer Start im Gottesdienst",
-      "teensDraussen": "Treffpunkt im UG"
+      "teensDraussen": "Treffpunkt um 10:00 im UG"
     },
     "specialsKeywords": [
       "Abendmahl",
@@ -67,7 +67,8 @@
     "eventsUpcoming": "In den nächsten Tagen",
     "sermonTitleSunday": "WIR FEIERN GOTTESDIENST",
     "sermonTitleWeekday": "AM SONNTAG",
-    "sermonProgram": "Für euch da",
+    "sermonProgram": "Heute für euch da",
+    "sermonProgramSub": "Vielen Dank allen, die diesen Sonntag mittragen.",
     "sermonKids": "Für unsere Kids & Teens",
     "sermonGastro": "Kaffee & Begegnung",
     "birthdaysTitle": "DIESE WOCHE GRATULIEREN WIR VON HERZEN:",

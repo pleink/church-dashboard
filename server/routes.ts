@@ -1,6 +1,6 @@
-import type {Express} from "express";
-import {createServer, type Server} from "http";
-import {getChurchToolsService} from "./services/churchtools";
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { getChurchToolsService } from "./services/churchtools";
 import config from "../config.json";
 
 
@@ -36,6 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             sermonTitleSunday: labelConfig.sermonTitleSunday || labelConfig.sermonTitle || "WIR FEIERN GOTTESDIENST",
             sermonTitleWeekday: labelConfig.sermonTitleWeekday || labelConfig.sermonTitle || "WIR FEIERN GOTTESDIENST",
             sermonProgram: labelConfig.sermonProgram || "MIT DABEI",
+            sermonProgramSub: labelConfig.sermonProgramSub || "Vielen Dank allen, die diesen Sonntag mittragen.",
             sermonKids: labelConfig.sermonKids || "FÜR UNSERE KIDS & TEENS",
             sermonGastro: labelConfig.sermonGastro || "KAFFEE & BEGEGNUNG",
             birthdaysTitle: labelConfig.birthdaysTitle || "DIESE WOCHE FEIERN WIR...",
@@ -193,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 })[0];
 
             if (!nextSermon) {
-                return res.status(404).json({message: "Keine bevorstehenden Gottesdienste gefunden"});
+                return res.status(404).json({ message: "Keine bevorstehenden Gottesdienste gefunden" });
             }
 
             const startDate = nextSermon.start || '';
@@ -318,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             res.json(formattedEvent);
         } catch (error) {
             console.error("Error fetching events:", error);
-            res.status(500).json({message: "Fehler beim Laden der Veranstaltungen"});
+            res.status(500).json({ message: "Fehler beim Laden der Veranstaltungen" });
         }
     });
 
@@ -373,7 +374,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
         } catch (error) {
             console.error("Error fetching today's appointments:", error);
-            res.status(500).json({message: "Fehler beim Laden der heutigen Termine"});
+            res.status(500).json({ message: "Fehler beim Laden der heutigen Termine" });
         }
     });
 
@@ -408,18 +409,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
                             resourceText = firstThreeResources;
                         }
                     }
-                    
-                        return {
-                            id: appointment.base?.id || 0,
-                            churchToolsId: appointment.base?.id || 0,
-                            title: allowDisplay ? getDisplayTitle(appointment) : '',
-                            color: getCalendarColor(appointment),
-                            startDateTime: start,
-                            location: getRoomResources(appointment),
-                            startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            }) : '',
+
+                    return {
+                        id: appointment.base?.id || 0,
+                        churchToolsId: appointment.base?.id || 0,
+                        title: allowDisplay ? getDisplayTitle(appointment) : '',
+                        color: getCalendarColor(appointment),
+                        startDateTime: start,
+                        location: getRoomResources(appointment),
+                        startTime: start ? new Date(start).toLocaleTimeString('de-DE', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) : '',
                         endTime: end ? new Date(end).toLocaleTimeString('de-DE', {
                             hour: '2-digit',
                             minute: '2-digit'
@@ -430,11 +431,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
                             month: 'short'
                         }) : '',
                         resource: resourceText,
-                            isPublic: allowDisplay,
-                            calendarId,
-                            imageUrl: extractImage(appointment)
-                        };
-                    });
+                        isPublic: allowDisplay,
+                        calendarId,
+                        imageUrl: extractImage(appointment)
+                    };
+                });
 
                 res.json(formattedAppointments);
             } else {
@@ -442,7 +443,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
         } catch (error) {
             console.error("Error fetching upcoming appointments:", error);
-            res.status(500).json({message: "Fehler beim Laden der anstehenden Termine"});
+            res.status(500).json({ message: "Fehler beim Laden der anstehenden Termine" });
         }
     });
 
@@ -470,7 +471,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
         } catch (error) {
             console.error("Error fetching birthdays:", error);
-            res.status(500).json({message: "Fehler beim Laden der Geburtstage"});
+            res.status(500).json({ message: "Fehler beim Laden der Geburtstage" });
         }
     });
 
@@ -479,16 +480,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Fetch daily verse from Devotionalium API with configured translation
             const apiUrl = `https://devotionalium.com/api/v2?lang=${config.devotionalium.language}&bibleVersion=${config.devotionalium.bibleVersion}`;
             const response = await fetch(apiUrl);
-            
+
             if (!response.ok) {
                 throw new Error(`Devotionalium API error: ${response.status}`);
             }
-            
+
             const data = await response.json();
-            
+
             // Get the Bible verse (collection 1 = New Testament)
             const bibleVerse = data['1'];
-            
+
             if (bibleVerse && bibleVerse.text) {
                 res.json({
                     id: 1,
@@ -508,7 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
         } catch (error) {
             console.error("Error fetching verse from Devotionalium:", error);
-            
+
             // Fallback to default verse on error
             res.json({
                 id: 0,
@@ -523,7 +524,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
             // Get upcoming appointments from configured calendars that have images
             const publicAppointments = await churchToolsService.getUpcomingAppointments(30);
-            
+
             // Filter for public calendar appointments with images
             const appointmentsWithImages = publicAppointments
                 .filter((appointment: any) => {
@@ -545,7 +546,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             res.json(formattedFlyers);
         } catch (error) {
             console.error("Error fetching flyers:", error);
-            res.status(500).json({message: "Fehler beim Laden der Flyer"});
+            res.status(500).json({ message: "Fehler beim Laden der Flyer" });
         }
     });
 
