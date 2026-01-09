@@ -28,7 +28,6 @@ export default function NextServiceWeekday() {
                 className={containerClass}
                 title={title}
                 icon={headingIcon}
-                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-start"
             >
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
@@ -44,7 +43,6 @@ export default function NextServiceWeekday() {
                 className={containerClass}
                 title={title}
                 icon={headingIcon}
-                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-start"
             >
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
                     <p className="text-xl text-red-800">
@@ -60,7 +58,6 @@ export default function NextServiceWeekday() {
             className={containerClass}
             title={title}
             icon={headingIcon}
-            headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-start"
         >
             {event.imageUrl && (
                 <img
@@ -143,33 +140,33 @@ export default function NextServiceWeekday() {
                         />
                     )}
 
-                        {event.services.gastro && (
-                            <SignageList
-                                title={gastroLabel}
-                                items={event.services.gastro
-                                    .slice()
-                                    .sort((a, b) => {
-                                        if (a.id === 140 && b.id !== 140) return -1;
-                                        if (b.id === 140 && a.id !== 140) return 1;
-                                        return a.id - b.id;
-                                    })
-                                    .map((svc) => {
-                                        const hasTeam = svc.status !== 'unavailable';
-                                        const hours = svc.id === 140
-                                            ? config.services.gastro.hours?.kaffeebar
-                                            : svc.id === 127
-                                                ? config.services.gastro.hours?.bistro
-                                                : '';
-                                        const strings = config.services.gastro.strings || {};
-                                        return {
-                                            key: svc.id,
-                                            color: hasTeam ? '#facc15' : '#d1d5db',
-                                            title: svc.name,
-                                            subtitle: hasTeam ? (hours || strings.available || 'Verfügbar') : (strings.unavailable || 'Nicht besetzt'),
-                                        };
-                                    })}
-                            />
-                        )}
+                    {event.services.gastro && (
+                        <SignageList
+                            title={gastroLabel}
+                            items={event.services.gastro
+                                .slice()
+                                .sort((a, b) => {
+                                    if (a.id === 140 && b.id !== 140) return -1;
+                                    if (b.id === 140 && a.id !== 140) return 1;
+                                    return a.id - b.id;
+                                })
+                                .map((svc) => {
+                                    const hasTeam = svc.status !== 'unavailable';
+                                    const hours = svc.id === 140
+                                        ? config.services.gastro.hours?.kaffeebar
+                                        : svc.id === 127
+                                            ? config.services.gastro.hours?.bistro
+                                            : '';
+                                    const strings = config.services.gastro.strings || {};
+                                    return {
+                                        key: svc.id,
+                                        color: hasTeam ? '#facc15' : '#d1d5db',
+                                        title: svc.name,
+                                        subtitle: hasTeam ? (hours || strings.available || 'Verfügbar') : (strings.unavailable || 'Nicht besetzt'),
+                                    };
+                                })}
+                        />
+                    )}
                 </div>
             )}
         </SignageSection>

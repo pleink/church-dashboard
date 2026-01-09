@@ -7,11 +7,10 @@ export function Birthdays() {
   const { data: labels } = useSignageLabels();
   const title = labels?.birthdaysTitle || "DIESE WOCHE FEIERN WIR...";
   const headingIcon = <Cake size={32} />;
-  const sectionClass = "col-span-7 section-card p-12";
 
   if (isLoading) {
     return (
-      <SignageSection className={sectionClass} title={title} icon={headingIcon}>
+      <SignageSection title={title} icon={headingIcon}>
         <div className="text-center py-8">
           <span className="loading loading-ring loading-lg text-church-blue"></span>
           <p className="text-xl text-gray-600 mt-4">Lade Geburtstage...</p>
@@ -22,7 +21,7 @@ export function Birthdays() {
 
   if (error) {
     return (
-      <SignageSection className={sectionClass} title={title} icon={headingIcon}>
+      <SignageSection title={title} icon={headingIcon}>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
           <p className="text-xl text-red-800">
             Fehler beim Laden der Geburtstage.
@@ -34,10 +33,8 @@ export function Birthdays() {
 
   return (
     <SignageSection
-      className={sectionClass}
       title={title}
       icon={headingIcon}
-      headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
     >
       <div className="grid grid-cols-2 gap-8 pt-4">
         {birthdays && birthdays.length > 0 ? (

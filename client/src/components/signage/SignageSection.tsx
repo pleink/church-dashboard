@@ -15,7 +15,7 @@ export function SignageSection({
   icon,
   iconClassName = "signage-icon text-church-yellow mr-4 flex-shrink-0",
   className = "col-span-7 section-card p-12",
-  headingClassName = "text-4xl font-semibold text-church-blue mb-8 flex items-center",
+  headingClassName = "text-4xl font-semibold text-church-blue mb-8 flex items-start",
   contentClassName,
   children,
 }: SignageSectionProps) {
@@ -31,8 +31,8 @@ export function SignageSection({
         <h2 className={headingClassName}>
           {icon && React.isValidElement(icon)
             ? React.cloneElement(icon, {
-                className: [iconClassName, icon.props.className].filter(Boolean).join(" "),
-              })
+              className: [iconClassName, icon.props.className].filter(Boolean).join(" "),
+            })
             : icon}
           {title}
         </h2>
