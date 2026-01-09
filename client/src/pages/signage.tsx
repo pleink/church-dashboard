@@ -1,6 +1,6 @@
 import { Header } from "@/components/signage/Header";
 import NextEvents from "@/components/signage/NextEvents";
-import NextServiceWeekday from "@/components/signage/NextService";
+import NextServiceWeekday from "@/components/signage/NextServiceWeekday";
 import NextServiceSunday from "@/components/signage/NextServiceSunday";
 import { Birthdays } from "@/components/signage/Birthdays";
 import { Tagesvers } from "@/components/signage/Tagesvers";

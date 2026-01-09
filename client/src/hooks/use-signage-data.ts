@@ -102,8 +102,8 @@ interface SignageLabels {
 export function useSignageSermon() {
   return useQuery<SignageEvent>({
     queryKey: ["/api/signage/sermon"],
-    refetchInterval: 15 * 60 * 1000, // 15 minutes
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchInterval: 30 * 1000, // 1 minute for accurate live status (e.g., gastro)
+    staleTime: 15 * 1000, // 30 seconds
   });
 }
 
