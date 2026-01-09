@@ -22,7 +22,6 @@ export default function NextServiceSunday() {
                 className={containerClass}
                 title={title}
                 icon={headingIcon}
-                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
             >
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
@@ -38,7 +37,6 @@ export default function NextServiceSunday() {
                 className={containerClass}
                 title={title}
                 icon={headingIcon}
-                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
             >
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
                     <p className="text-xl text-red-800">
@@ -54,7 +52,6 @@ export default function NextServiceSunday() {
             className={containerClass}
             title={title}
             icon={headingIcon}
-            headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
         >
             {event.imageUrl && (
                 <img
