@@ -106,7 +106,7 @@ export default function NextServiceSunday() {
                             <div className="pt-1 space-y-3">
                                 <div>
                                     <h3 className="text-2xl font-semibold text-gray-800 mb-1">{programLabel}</h3>
-                                    <div className="text-gray-600 font-light mb-2">{programSubtitle}</div>
+                                    <div className="text-gray-600 font-light mb-2 italic">{programSubtitle}</div>
                                 </div>
                                 {(() => {
                                     const roleLabels: Record<number, string> = {
