@@ -9,7 +9,7 @@ export function Tagesvers() {
   if (isLoading) {
     return (
       <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
-        <h2 className="text-4xl font-semibold mb-8 flex items-center">
+        <h2 className="text-4xl font-semibold mb-8 flex items-start">
           <Book className="signage-icon text-church-yellow mr-4" size={32} />
           {title}
         </h2>
@@ -24,7 +24,7 @@ export function Tagesvers() {
   if (error || !verse) {
     return (
       <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
-        <h2 className="text-4xl font-semibold mb-8 flex items-center">
+        <h2 className="text-4xl font-semibold mb-8 flex items-start">
           <Book className="signage-icon text-church-yellow mr-4" size={32} />
           {title}
         </h2>
@@ -45,7 +45,7 @@ export function Tagesvers() {
 
   return (
     <section className="col-span-5 verse-block text-white p-12 rounded-2xl">
-      <h2 className="text-4xl font-semibold mb-6 flex items-center">
+      <h2 className="text-4xl font-semibold mb-6 flex items-start">
         <Book className="signage-icon text-church-yellow mr-4" size={32} />
         {title}
       </h2>
