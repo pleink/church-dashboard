@@ -1,6 +1,7 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
 import { BookOpenText } from "lucide-react";
 import { SignageList } from "./SignageList";
+import { SignageSection } from "./SignageSection";
 
 export default function NextServiceWeekday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -18,44 +19,48 @@ export default function NextServiceWeekday() {
     const teensService = kidsServices.find((svc) => svc.id === 136);
     const kidsStart = groupedKids.find((svc) => svc.statusLabel)?.statusLabel || "";
 
+    const headingIcon = <BookOpenText size={32} />;
+
     if (isLoading) {
         return (
-            <section className={containerClass}>
-                <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-start">
-                    <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
-                    {title}
-                </h2>
+            <SignageSection
+                className={containerClass}
+                title={title}
+                icon={headingIcon}
+                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-start"
+            >
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
                     <p className="text-xl text-gray-600 mt-4">Lade Gottesdienst...</p>
                 </div>
-            </section>
+            </SignageSection>
         );
     }
 
     if (!event) {
         return (
-            <section className={containerClass}>
-                <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-start">
-                    <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
-                    {title}
-                </h2>
+            <SignageSection
+                className={containerClass}
+                title={title}
+                icon={headingIcon}
+                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-start"
+            >
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
                     <p className="text-xl text-red-800">
                         Keine bevorstehenden Gottesdienste gefunden.
                     </p>
                 </div>
-            </section>
+            </SignageSection>
         );
     }
 
     return (
-        <section className={containerClass}>
-            <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-start">
-                <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
-                {title}
-            </h2>
-
+        <SignageSection
+            className={containerClass}
+            title={title}
+            icon={headingIcon}
+            headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-start"
+        >
             {event.imageUrl && (
                 <img
                     src={event.imageUrl}
@@ -106,61 +111,61 @@ export default function NextServiceWeekday() {
                         {event.description}
                     </p>
                 )}
-
-                <div className="border-t-2 border-gray-200 my-6"></div>
-
-                {event.services && (
-                    <div className="space-y-6 pt-2">
-                        {kidsServices && kidsServices.length > 0 && (
-                            <SignageList
-                                title={kidsLabel}
-                                items={[
-                                    ...(groupedKids.length > 0
-                                        ? [{
-                                            key: 'kids-grouped',
-                                            color: '#facc15',
-                                            title: 'Kinderhüeti & Kidsträff',
-                                            subtitle: kidsStart,
-                                        }]
-                                        : []),
-                                    ...(teensService
-                                        ? [{
-                                            key: teensService.id || 'teens',
-                                            color: '#facc15',
-                                            title: teensService.name,
-                                            subtitle: teensService.statusLabel,
-                                        }]
-                                        : []),
-                                ]}
-                                showEndDivider={Boolean(event.services.gastro && event.services.gastro.length > 0)}
-                            />
-                        )}
-
-                        {event.services.gastro && (
-                            <SignageList
-                                title={gastroLabel}
-                                items={event.services.gastro
-                                    .slice()
-                                    .sort((a, b) => {
-                                        if (a.id === 140 && b.id !== 140) return -1;
-                                        if (b.id === 140 && a.id !== 140) return 1;
-                                        return a.id - b.id;
-                                    })
-                                    .map((svc) => {
-                                        const hasTeam = svc.status !== 'unavailable';
-                                        const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
-                                        return {
-                                            key: svc.id,
-                                            color: hasTeam ? '#facc15' : '#d1d5db',
-                                            title: svc.name,
-                                            subtitle: hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt',
-                                        };
-                                    })}
-                            />
-                        )}
-                    </div>
-                )}
             </div>
-        </section>
+
+            <div className="signage-divider signage-divider-lg"></div>
+
+            {event.services && (
+                <div className="space-y-6 pt-2">
+                    {kidsServices && kidsServices.length > 0 && (
+                        <SignageList
+                            title={kidsLabel}
+                            items={[
+                                ...(groupedKids.length > 0
+                                    ? [{
+                                        key: 'kids-grouped',
+                                        color: '#facc15',
+                                        title: 'Kinderhüeti & Kidsträff',
+                                        subtitle: kidsStart,
+                                    }]
+                                    : []),
+                                ...(teensService
+                                    ? [{
+                                        key: teensService.id || 'teens',
+                                        color: '#facc15',
+                                        title: teensService.name,
+                                        subtitle: teensService.statusLabel,
+                                    }]
+                                    : []),
+                            ]}
+                            showEndDivider={Boolean(event.services.gastro && event.services.gastro.length > 0)}
+                        />
+                    )}
+
+                    {event.services.gastro && (
+                        <SignageList
+                            title={gastroLabel}
+                            items={event.services.gastro
+                                .slice()
+                                .sort((a, b) => {
+                                    if (a.id === 140 && b.id !== 140) return -1;
+                                    if (b.id === 140 && a.id !== 140) return 1;
+                                    return a.id - b.id;
+                                })
+                                .map((svc) => {
+                                    const hasTeam = svc.status !== 'unavailable';
+                                    const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
+                                    return {
+                                        key: svc.id,
+                                        color: hasTeam ? '#facc15' : '#d1d5db',
+                                        title: svc.name,
+                                        subtitle: hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt',
+                                    };
+                                })}
+                        />
+                    )}
+                </div>
+            )}
+        </SignageSection>
     );
 }

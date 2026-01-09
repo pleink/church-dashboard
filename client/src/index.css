@@ -234,6 +234,9 @@
   margin: var(--signage-space-6) 0;
   border: 0;
 }
+.signage-container .signage-divider-lg {
+  margin: var(--signage-space-8) 0;
+}
 
 .signage-container .text-6xl {
   font-size: calc(var(--signage-vw) * 60);

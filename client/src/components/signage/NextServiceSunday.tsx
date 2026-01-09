@@ -1,6 +1,7 @@
 import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data";
 import { BookOpenText, User } from "lucide-react";
 import { SignageList } from "./SignageList";
+import { SignageSection } from "./SignageSection";
 
 export default function NextServiceSunday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -11,44 +12,48 @@ export default function NextServiceSunday() {
     const gastroLabel = labels?.sermonGastro || "KAFFEE & BEGEGNUNG";
     const containerClass = "col-span-7 section-card p-12";
 
+    const headingIcon = <BookOpenText size={32} />;
+
     if (isLoading) {
         return (
-            <section className={containerClass}>
-                <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-                    <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
-                    {title}
-                </h2>
+            <SignageSection
+                className={containerClass}
+                title={title}
+                icon={headingIcon}
+                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
+            >
                 <div className="text-center py-8">
                     <span className="loading loading-ring loading-lg text-church-blue"></span>
                     <p className="text-xl text-gray-600 mt-4">Lade Gottesdienst...</p>
                 </div>
-            </section>
+            </SignageSection>
         );
     }
 
     if (!event) {
         return (
-            <section className={containerClass}>
-                <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-                    <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
-                    {title}
-                </h2>
+            <SignageSection
+                className={containerClass}
+                title={title}
+                icon={headingIcon}
+                headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
+            >
                 <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
                     <p className="text-xl text-red-800">
                         Keine bevorstehenden Gottesdienste gefunden.
                     </p>
                 </div>
-            </section>
+            </SignageSection>
         );
     }
 
     return (
-        <section className={containerClass}>
-            <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-                <BookOpenText className="signage-icon text-church-yellow mr-4" size={32} />
-                {title}
-            </h2>
-
+        <SignageSection
+            className={containerClass}
+            title={title}
+            icon={headingIcon}
+            headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
+        >
             {event.imageUrl && (
                 <img
                     src={event.imageUrl}
@@ -212,6 +217,6 @@ export default function NextServiceSunday() {
                     </div>
                 )}
             </div>
-        </section>
+        </SignageSection>
     );
 }

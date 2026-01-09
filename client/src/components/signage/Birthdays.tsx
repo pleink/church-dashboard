@@ -1,50 +1,45 @@
 import { Cake, User } from "lucide-react";
 import { useBirthdays, useSignageLabels } from "@/hooks/use-signage-data";
+import { SignageSection } from "./SignageSection";
 
 export function Birthdays() {
   const { data: birthdays, isLoading, error } = useBirthdays();
   const { data: labels } = useSignageLabels();
   const title = labels?.birthdaysTitle || "DIESE WOCHE FEIERN WIR...";
+  const headingIcon = <Cake size={32} />;
+  const sectionClass = "col-span-7 section-card p-12";
 
   if (isLoading) {
     return (
-      <section className="col-span-7 section-card p-12">
-        <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-          <Cake className="signage-icon text-church-yellow mr-4" size={32} />
-          {title}
-        </h2>
+      <SignageSection className={sectionClass} title={title} icon={headingIcon}>
         <div className="text-center py-8">
           <span className="loading loading-ring loading-lg text-church-blue"></span>
           <p className="text-xl text-gray-600 mt-4">Lade Geburtstage...</p>
         </div>
-      </section>
+      </SignageSection>
     );
   }
 
   if (error) {
     return (
-      <section className="col-span-7 section-card p-12">
-        <h2 className="text-4xl font-semibold text-church-blue mb-8 flex items-center">
-          <Cake className="signage-icon text-church-yellow mr-4" size={32} />
-          {title}
-        </h2>
+      <SignageSection className={sectionClass} title={title} icon={headingIcon}>
         <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
           <p className="text-xl text-red-800">
             Fehler beim Laden der Geburtstage.
           </p>
         </div>
-      </section>
+      </SignageSection>
     );
   }
 
   return (
-    <section className="col-span-7 section-card p-12">
-      <h2 className="text-4xl font-semibold text-church-blue mb-6 flex items-center">
-        <Cake className="signage-icon text-church-yellow mr-4 flex-shrink-0" size={32} />
-        {title}
-      </h2>
-
-      <div className="grid grid-cols-2 gap-8">
+    <SignageSection
+      className={sectionClass}
+      title={title}
+      icon={headingIcon}
+      headingClassName="text-4xl font-semibold text-church-blue mb-6 flex items-center"
+    >
+      <div className="grid grid-cols-2 gap-8 pt-4">
         {birthdays && birthdays.length > 0 ? (
           birthdays.slice(0, 4).map((person) => (
             <div key={person.churchToolsId || person.id} className="flex items-center space-x-4">
@@ -77,6 +72,6 @@ export function Birthdays() {
           </div>
         )}
       </div>
-    </section>
+    </SignageSection>
   );
 }
