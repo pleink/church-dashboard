@@ -2,6 +2,7 @@ import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data
 import { BookOpenText } from "lucide-react";
 import { SignageList } from "./SignageList";
 import { SignageSection } from "./SignageSection";
+import config from "../../../../config.json";
 
 export default function NextServiceWeekday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -142,28 +143,33 @@ export default function NextServiceWeekday() {
                         />
                     )}
 
-                    {event.services.gastro && (
-                        <SignageList
-                            title={gastroLabel}
-                            items={event.services.gastro
-                                .slice()
-                                .sort((a, b) => {
-                                    if (a.id === 140 && b.id !== 140) return -1;
-                                    if (b.id === 140 && a.id !== 140) return 1;
-                                    return a.id - b.id;
-                                })
-                                .map((svc) => {
-                                    const hasTeam = svc.status !== 'unavailable';
-                                    const hours = svc.id === 127 ? '11:30–13:00' : svc.id === 140 ? '09:30–09:55' : '';
-                                    return {
-                                        key: svc.id,
-                                        color: hasTeam ? '#facc15' : '#d1d5db',
-                                        title: svc.name,
-                                        subtitle: hasTeam ? (hours || 'Verfügbar') : 'Nicht besetzt',
-                                    };
-                                })}
-                        />
-                    )}
+                        {event.services.gastro && (
+                            <SignageList
+                                title={gastroLabel}
+                                items={event.services.gastro
+                                    .slice()
+                                    .sort((a, b) => {
+                                        if (a.id === 140 && b.id !== 140) return -1;
+                                        if (b.id === 140 && a.id !== 140) return 1;
+                                        return a.id - b.id;
+                                    })
+                                    .map((svc) => {
+                                        const hasTeam = svc.status !== 'unavailable';
+                                        const hours = svc.id === 140
+                                            ? config.services.gastro.hours?.kaffeebar
+                                            : svc.id === 127
+                                                ? config.services.gastro.hours?.bistro
+                                                : '';
+                                        const strings = config.services.gastro.strings || {};
+                                        return {
+                                            key: svc.id,
+                                            color: hasTeam ? '#facc15' : '#d1d5db',
+                                            title: svc.name,
+                                            subtitle: hasTeam ? (hours || strings.available || 'Verfügbar') : (strings.unavailable || 'Nicht besetzt'),
+                                        };
+                                    })}
+                            />
+                        )}
                 </div>
             )}
         </SignageSection>

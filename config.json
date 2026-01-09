@@ -44,6 +44,21 @@
       4,
       7
     ],
+    "gastro": {
+      "hours": {
+        "kaffeebar": "09:30–09:55",
+        "bistro": "11:30–13:00"
+      },
+      "strings": {
+        "opensAt": "öffnet um {time}",
+        "openRange": "geöffnet bis {end}",
+        "closedAfter": "geschlossen",
+        "closedToday": "bleibt heute geschlossen",
+        "available": "Verfügbar",
+        "unavailable": "Nicht besetzt"
+      },
+      "nearbyThresholdMinutes": 5
+    },
     "kidsDescriptions": {
       "68": "0 bis 4 Jahre",
       "71": "ab Kindergarten",

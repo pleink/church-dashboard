@@ -2,6 +2,7 @@ import { useSignageSermon, useSignageLabels } from "../../hooks/use-signage-data
 import { BookOpenText, User } from "lucide-react";
 import { SignageList } from "./SignageList";
 import { SignageSection } from "./SignageSection";
+import config from "../../../../config.json";
 
 export default function NextServiceSunday() {
     const { data: event, isLoading } = useSignageSermon();
@@ -198,21 +199,76 @@ export default function NextServiceSunday() {
                                     <SignageList
                                         title={gastroLabel}
                                         items={event.services.gastro.map((svc) => {
-                                            const toneColor = svc.tone === 'green'
+                                            const baseColor = svc.tone === 'green'
                                                 ? '#22c55e'
                                                 : svc.tone === 'yellow'
                                                     ? '#facc15'
                                                     : svc.tone === 'red'
                                                         ? '#ef4444'
                                                         : '#d1d5db';
-                                            const hours = svc.id === 140 ? '09:30–09:55' : svc.id === 127 ? '11:30–13:00' : undefined;
+                                            const hours = svc.id === 140
+                                                ? config.services.gastro.hours?.kaffeebar
+                                                : svc.id === 127
+                                                    ? config.services.gastro.hours?.bistro
+                                                    : undefined;
                                             const isStaffed = svc.status !== 'unavailable';
-                                            const openText = hours ? `öffnet um ${hours.split('–')[0]}` : undefined;
+                                            const strings = config.services.gastro.strings || {};
+                                            const threshold = config.services.gastro.nearbyThresholdMinutes ?? 5;
+
+                                            if (!isStaffed) {
+                                                return {
+                                                    key: svc.id,
+                                                    color: '#d1d5db',
+                                                    title: svc.name,
+                                                    rightPrimary: strings.closedToday || 'bleibt heute geschlossen',
+                                                };
+                                            }
+
+                                            if (!hours) {
+                                                return {
+                                                    key: svc.id,
+                                                    color: baseColor,
+                                                    title: svc.name,
+                                                    rightPrimary: svc.label || 'Verfügbar',
+                                                };
+                                            }
+
+                                            const [startStr, endStr] = hours.split('–');
+                                            const now = new Date();
+                                            const toDate = (timeStr: string) => {
+                                                const [h, m] = timeStr.split(':').map(Number);
+                                                const d = new Date(now);
+                                                d.setHours(h, m, 0, 0);
+                                                return d;
+                                            };
+                                            const start = toDate(startStr);
+                                            const end = toDate(endStr);
+                                            const minsUntilStart = (start.getTime() - now.getTime()) / 60000;
+                                            const minsUntilEnd = (end.getTime() - now.getTime()) / 60000;
+
+                                            let color = baseColor;
+                                            let rightPrimary = '';
+
+                                            if (minsUntilStart > 0) {
+                                                color = '#ef4444';
+                                                if (minsUntilStart <= threshold) color = '#facc15';
+                                                rightPrimary = (strings.opensAt || 'öffnet um {time}').replace('{time}', startStr);
+                                            } else if (minsUntilEnd >= 0) {
+                                                color = '#22c55e';
+                                                if (minsUntilEnd <= threshold) color = '#facc15';
+                                                rightPrimary = (strings.openRange || 'geöffnet zwischen {start} - {end}')
+                                                    .replace('{start}', startStr)
+                                                    .replace('{end}', endStr);
+                                            } else {
+                                                color = '#ef4444';
+                                                rightPrimary = strings.closedAfter || 'geschlossen';
+                                            }
+
                                             return {
                                                 key: svc.id,
-                                                color: toneColor,
+                                                color,
                                                 title: svc.name,
-                                                rightPrimary: isStaffed ? (openText || svc.label || 'Verfügbar') : (svc.label || 'Nicht besetzt'),
+                                                rightPrimary,
                                             };
                                         })}
                                     />
