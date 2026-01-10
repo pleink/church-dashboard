@@ -33,15 +33,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             eventsTitle: labelConfig.eventsTitle || "BLICK VORAUS",
             eventsToday: labelConfig.eventsToday || "HEUTE BEI UNS",
             eventsUpcoming: labelConfig.eventsUpcoming || "IN DEN NÄCHSTEN TAGEN",
-            sermonTitleSunday: labelConfig.sermonTitleSunday || labelConfig.sermonTitle || "WIR FEIERN GOTTESDIENST",
-            sermonTitleWeekday: labelConfig.sermonTitleWeekday || labelConfig.sermonTitle || "WIR FEIERN GOTTESDIENST",
+            sermonTitleSunday: labelConfig.sermonTitleSunday || "WIR FEIERN GOTTESDIENST",
+            sermonTitleWeekday: labelConfig.sermonTitleWeekday || "WIR FEIERN GOTTESDIENST",
             sermonProgram: labelConfig.sermonProgram || "MIT DABEI",
             sermonProgramSub: labelConfig.sermonProgramSub || "Vielen Dank allen, die diesen Sonntag mittragen.",
             sermonKids: labelConfig.sermonKids || "FÜR UNSERE KIDS & TEENS",
             sermonGastro: labelConfig.sermonGastro || "KAFFEE & BEGEGNUNG",
             birthdaysTitle: labelConfig.birthdaysTitle || "DIESE WOCHE FEIERN WIR...",
             verseTitle: labelConfig.verseTitle || "TAGESVERS",
-            flyersTitle: labelConfig.flyersTitle || "FLYER",
         });
     });
 
@@ -456,12 +455,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 const formattedBirthdays = churchToolsBirthdays.map((birthday: any) => ({
                     id: birthday.person?.domainIdentifier || birthday.id,
                     churchToolsId: birthday.person?.domainIdentifier || birthday.id,
-                    name: birthday.person ? `${birthday.person.domainAttributes.firstName} ${birthday.person.domainAttributes.lastName}` : 'Unbekannt',
+                    name: birthday.person?.domainAttributes
+                        ? `${birthday.person.domainAttributes.firstName} ${birthday.person.domainAttributes.lastName}`
+                        : birthday.person?.title || 'Unbekannt',
                     birthdayText: birthday.anniversary ? new Date(birthday.anniversary).toLocaleDateString('de-DE', {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long'
-                    }) : '',
+                    }) : (birthday.dateText || ''),
                     avatar: birthday.person?.imageUrl || ''
                 }));
 

@@ -81,6 +81,42 @@ type ChurchToolsServiceDef = {
   serviceGroupId: number | null;
 };
 
+type StartpageWidget = {
+  key: string;
+  widgetType: string;
+  items?: StartpageWidgetItem[] | null;
+};
+type StartpageWidgetItem = {
+  title?: string;
+  summaryText?: string;
+  infos?: { text: string }[];
+  details?: {
+    domainObject?: StartpageDomainPerson;
+  };
+  actionData?: {
+    personId?: number;
+  };
+};
+type StartpageDomainPerson = {
+  domainIdentifier?: string;
+  domainType?: string;
+  frontendUrl?: string | null;
+  imageUrl?: string | null;
+  title?: string;
+  domainAttributes?: {
+    firstName?: string;
+    lastName?: string;
+    guid?: string;
+    dateOfDeath?: string | null;
+    isArchived?: boolean;
+  };
+};
+type BirthdayEntry = {
+  person: StartpageDomainPerson;
+  anniversary?: string | null;
+  dateText?: string;
+};
+
 interface ChurchToolsApiResponse<T> {
   data: T;
 }
@@ -215,6 +251,20 @@ export class ChurchToolsService {
     return result.data;
   }
 
+  private parseDateFromText(dateText?: string): string | null {
+    if (!dateText) return null;
+    const match = dateText.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+    if (!match) return null;
+    const [, day, month, year] = match;
+    const parsed = new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+    );
+    if (Number.isNaN(parsed.getTime())) return null;
+    return parsed.toISOString();
+  }
+
   async getUpcomingEvents(limit = 5, options?: { throwOnError?: boolean }): Promise<ChurchToolsEvent[]> {
     const { throwOnError = false } = options ?? {};
     try {
@@ -326,7 +376,7 @@ export class ChurchToolsService {
       today.setHours(0, 0, 0, 0);
       const endDate = new Date(today);
       endDate.setDate(today.getDate() + Math.max(days - 1, 0));
-      
+
       const calendarIds = await this.getGroupCalendarIds();
       const allCalendarIds = [
         ...this.appConfig.calendars.sermons,
@@ -442,18 +492,37 @@ export class ChurchToolsService {
     }
   }
 
-  async getBirthdaysThisWeek(): Promise<ChurchToolsPerson[]> {
+  async getBirthdaysThisWeek(): Promise<BirthdayEntry[]> {
     try {
-      // Use the dedicated birthdays endpoint which provides structured birthday data
-      const birthdays = await this.makeRequest<any[]>("/persons/birthdays", {
-        from_days_ago: "0",
-        to_days_ahead: "7",
-      });
-      return birthdays || [];
+      const widgets = await this.makeRequest<StartpageWidget[]>("/startpage");
+      const items =
+        widgets.find((widget) =>
+          ["birthdays-next", "birthday-next"].includes(widget.key),
+        )?.items ?? [];
+
+      if (!items.length) {
+        return [];
+      }
+
+      return items
+        .map((item) => this.mapBirthdayItem(item))
+        .filter((item): item is BirthdayEntry => item !== null);
     } catch (error) {
       console.error("Error fetching birthdays from ChurchTools:", error);
       return [];
     }
+  }
+
+  private mapBirthdayItem(item: StartpageWidgetItem): BirthdayEntry | null {
+    const person = item.details?.domainObject;
+    if (!person) return null;
+
+    const dateText = item.infos?.[0]?.text ?? "";
+    return {
+      person,
+      anniversary: this.parseDateFromText(dateText),
+      dateText,
+    };
   }
 
   // Status methods

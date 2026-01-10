@@ -96,7 +96,6 @@ interface SignageLabels {
   sermonGastro: string;
   birthdaysTitle: string;
   verseTitle: string;
-  flyersTitle: string;
 }
 
 export function useSignageSermon() {
