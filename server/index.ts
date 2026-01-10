@@ -9,6 +9,31 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Optional basic auth to mirror Synology upload environment
+const basicAuthUser = process.env.BASIC_AUTH_USER;
+const basicAuthPass = process.env.BASIC_AUTH_PASS;
+if (basicAuthUser && basicAuthPass) {
+  app.use((req, res, next) => {
+    const header = req.headers.authorization;
+    if (!header || !header.startsWith("Basic ")) {
+      res.setHeader("WWW-Authenticate", 'Basic realm="dashboard"');
+      return res.status(401).send("Authentication required.");
+    }
+
+    const credentials = Buffer.from(header.split(" ")[1], "base64")
+      .toString("utf8")
+      .split(":");
+    const [user, pass] = credentials;
+
+    if (user === basicAuthUser && pass === basicAuthPass) {
+      return next();
+    }
+
+    res.setHeader("WWW-Authenticate", 'Basic realm="dashboard"');
+    return res.status(401).send("Authentication required.");
+  });
+}
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

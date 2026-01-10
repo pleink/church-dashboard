@@ -15,7 +15,7 @@ export default function Signage() {
         <div className="signage-container mx-auto bg-gray-50 overflow-hidden min-h-screen flex flex-col">
             <Header />
 
-            <div className="px-16 py-8 grid grid-cols-12 gap-8 flex-1">
+            <div className="px-16 py-8 grid grid-cols-12 grid-rows-[auto_auto_minmax(0,1fr)] gap-8 flex-1 min-h-0 overflow-hidden">
                 {isSunday ? (
                     <>
                         <NextServiceSunday />

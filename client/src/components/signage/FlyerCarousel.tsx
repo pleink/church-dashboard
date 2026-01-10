@@ -32,51 +32,51 @@ export function FlyerCarousel() {
 
     if (isLoading) {
         return (
-        <section className="col-span-12 section-card p-4 w-full">
-            <div className="text-center py-8">
-                <span className="loading loading-ring loading-lg text-church-blue"></span>
-                <p className="text-xl text-gray-600 mt-4">Lade Flyer...</p>
-            </div>
-        </section>
+            <section className="col-span-12 section-card p-4 w-full">
+                <div className="text-center py-8">
+                    <span className="loading loading-ring loading-lg text-church-blue"></span>
+                    <p className="text-xl text-gray-600 mt-4">Lade Flyer...</p>
+                </div>
+            </section>
         );
     }
 
     if (error) {
         return (
-        <section className="col-span-12 section-card p-4 w-full">
-            <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
-                <p className="text-xl text-red-800">
-                    Fehler beim Laden der Flyer.
-                </p>
-            </div>
-        </section>
+            <section className="col-span-12 section-card p-4 w-full">
+                <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
+                    <p className="text-xl text-red-800">
+                        Fehler beim Laden der Flyer.
+                    </p>
+                </div>
+            </section>
         );
     }
 
     if (!activeFlyers || activeFlyers.length === 0) {
         return (
-        <section className="col-span-12 section-card p-4 w-full">
-            <div className="text-center py-12">
-                <Image className="mx-auto h-16 w-16 text-gray-400 mb-6" />
-                <p className="text-xl text-gray-500">
-                    Derzeit keine Flyer verfügbar.
-                </p>
-            </div>
-        </section>
+            <section className="col-span-12 section-card p-4 w-full">
+                <div className="text-center py-12">
+                    <Image className="mx-auto h-16 w-16 text-gray-400 mb-6" />
+                    <p className="text-xl text-gray-500">
+                        Derzeit keine Flyer verfügbar.
+                    </p>
+                </div>
+            </section>
         );
     }
 
     return (
-        <section className="col-span-12 section-card p-4 w-full h-full flex flex-col overflow-hidden">
-            <div className="relative w-full h-full flex-1">
-                <Slider {...settings} className="h-full">
+        <section className="col-span-12 section-card p-4 w-full h-full min-h-0 flex flex-col overflow-hidden">
+            <div className="relative flex-1 min-h-0">
+                <Slider {...settings} className="flyer-carousel h-full">
                     {activeFlyers.map((flyer) => (
-                        <div key={flyer.churchToolsId || flyer.id} className="w-full h-full">
-                            <div className="relative bg-white overflow-hidden flex items-center justify-center h-full min-h-[520px] rounded-xl">
+                        <div key={flyer.churchToolsId || flyer.id} className="h-full">
+                            <div className="relative bg-white overflow-hidden h-full rounded-xl">
                                 <img
                                     src={flyer.imageUrl}
                                     alt={flyer.title}
-                                    className="w-full h-full object-contain"
+                                    className="w-full h-full object-cover"
                                     onError={(e) => {
                                         console.error('Failed to load image:', flyer.imageUrl);
                                         const target = e.target as HTMLImageElement;
@@ -92,20 +92,19 @@ export function FlyerCarousel() {
                         </div>
                     ))}
                 </Slider>
-                
-                {activeFlyers.length > 1 && (
-                    <div className="flex justify-center mt-4 space-x-2">
-                        {activeFlyers.map((_, index) => (
-                            <div
-                                key={index}
-                                className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                                    index === currentSlide ? 'bg-church-yellow' : 'bg-gray-300'
-                                }`}
-                            />
-                        ))}
-                    </div>
-                )}
             </div>
+
+            {activeFlyers.length > 1 && (
+                <div className="flex items-center justify-center mt-4 space-x-2 shrink-0">
+                    {activeFlyers.map((_, index) => (
+                        <div
+                            key={index}
+                            className={`w-3 h-3 rounded-full transition-colors duration-300 ${index === currentSlide ? 'bg-church-yellow' : 'bg-gray-300'
+                                }`}
+                        />
+                    ))}
+                </div>
+            )}
         </section>
     );
 }
