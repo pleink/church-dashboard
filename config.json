@@ -95,9 +95,15 @@
     "maxEventsDisplay": 8,
     "carouselInterval": 7
   },
+  "flyers": {
+    "useChurchToolsImages": false,
+    "folders": [
+      "Slides_Dashboard"
+    ]
+  },
   "devotionalium": {
     "language": "de-de",
-    "bibleVersion": "lut",
+    "bibleVersion": "schla",
     "tanakhVersion": "naft",
     "quranVersion": "khoury"
   }

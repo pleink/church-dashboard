@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { getChurchToolsService } from "./services/churchtools";
 import config from "../config.json";
+import path from "path";
+import { promises as fs } from "fs";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -27,6 +29,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         specialsKeywords: config.services?.specialsKeywords ?? ["Abendmahl", "Kirche weltweit"],
     };
     const labelConfig = config.labels ?? {};
+    const flyerConfig = {
+        useChurchToolsImages: config.flyers?.useChurchToolsImages ?? true,
+        folders: (config.flyers?.folders ?? []).map((folder: string) => path.resolve(process.cwd(), folder)),
+    };
+    const flyerImageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"]);
+    const flyerFileCache = new Map<string, { mtimeMs: number; dataUrl: string }>();
 
     app.get("/api/signage/labels", (_req, res) => {
         res.json({
@@ -121,6 +129,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
             seen.add(id);
             return true;
         });
+    };
+
+    const hashString = (value: string) => {
+        let hash = 0;
+        for (let i = 0; i < value.length; i++) {
+            hash = (hash << 5) - hash + value.charCodeAt(i);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    };
+
+    const getMimeTypeFromExt = (ext: string) => {
+        switch (ext.toLowerCase()) {
+            case ".png": return "image/png";
+            case ".jpg":
+            case ".jpeg": return "image/jpeg";
+            case ".webp": return "image/webp";
+            case ".gif": return "image/gif";
+            case ".avif": return "image/avif";
+            default: return "application/octet-stream";
+        }
+    };
+
+    const getTitleFromFilename = (fileName: string) => {
+        const withoutExt = fileName.replace(path.extname(fileName), '');
+        const pretty = withoutExt.replace(/[_-]+/g, ' ').trim();
+        return pretty || 'Flyer';
+    };
+
+    const readLocalFlyers = async () => {
+        const flyers: any[] = [];
+        let index = 0;
+
+        for (const folder of flyerConfig.folders) {
+            try {
+                const entries = await fs.readdir(folder, { withFileTypes: true });
+                for (const entry of entries) {
+                    if (!entry.isFile()) continue;
+                    const ext = path.extname(entry.name).toLowerCase();
+                    if (!flyerImageExtensions.has(ext)) continue;
+
+                    const filePath = path.join(folder, entry.name);
+                    const stat = await fs.stat(filePath);
+                    const cached = flyerFileCache.get(filePath);
+                    let dataUrl = cached?.dataUrl;
+                    if (!cached || cached.mtimeMs !== stat.mtimeMs) {
+                        const buffer = await fs.readFile(filePath);
+                        const mimeType = getMimeTypeFromExt(ext);
+                        dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+                        flyerFileCache.set(filePath, { mtimeMs: stat.mtimeMs, dataUrl });
+                    }
+
+                    const id = hashString(`${filePath}-${index}`) || index + 1;
+                    flyers.push({
+                        id,
+                        churchToolsId: 0,
+                        imageUrl: dataUrl,
+                        title: getTitleFromFilename(entry.name),
+                        startDate: ''
+                    });
+                    index += 1;
+                }
+            } catch (error) {
+                console.warn(`Could not read flyer folder ${folder}:`, error instanceof Error ? error.message : error);
+            }
+        }
+
+        return flyers;
     };
 
     const getNow = () => new Date();
@@ -521,30 +597,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
     });
 
-    app.get("/api/signage/flyers", async (req, res) => {
+    const fetchChurchToolsFlyers = async () => {
+        // Get upcoming appointments from configured calendars that have images
+        const publicAppointments = await churchToolsService.getUpcomingAppointments(30);
+
+        // Filter for public calendar appointments with images
+        const appointmentsWithImages = publicAppointments
+            .filter((appointment: any) => {
+                const calendarId = appointment.base?.calendar?.id || 0;
+                const hasImage = extractImage(appointment);
+                const inConfig = allConfiguredCalendars.includes(calendarId);
+                return inConfig && hasImage;
+            })
+            .slice(0, 5); // Limit for performance
+
+        return appointmentsWithImages.map((appointment: any) => ({
+            id: appointment.base?.id || 0,
+            churchToolsId: appointment.base?.id || 0,
+            imageUrl: extractImage(appointment),
+            title: getDisplayTitle(appointment),
+            startDate: appointment.base?.startDate || ''
+        }));
+    };
+
+    app.get("/api/signage/flyers", async (_req, res) => {
         try {
-            // Get upcoming appointments from configured calendars that have images
-            const publicAppointments = await churchToolsService.getUpcomingAppointments(30);
+            const [localFlyers, churchToolsFlyers] = await Promise.all([
+                readLocalFlyers(),
+                flyerConfig.useChurchToolsImages ? fetchChurchToolsFlyers() : Promise.resolve([]),
+            ]);
 
-            // Filter for public calendar appointments with images
-            const appointmentsWithImages = publicAppointments
-                .filter((appointment: any) => {
-                    const calendarId = appointment.base?.calendar?.id || 0;
-                    const hasImage = extractImage(appointment);
-                    const inConfig = allConfiguredCalendars.includes(calendarId);
-                    return inConfig && hasImage;
-                })
-                .slice(0, 5); // Limit for performance
-
-            let formattedFlyers = appointmentsWithImages.map((appointment: any) => ({
-                id: appointment.base?.id || 0,
-                churchToolsId: appointment.base?.id || 0,
-                imageUrl: extractImage(appointment),
-                title: getDisplayTitle(appointment),
-                startDate: appointment.base?.startDate || ''
-            }));
-
-            res.json(formattedFlyers);
+            res.json([...localFlyers, ...churchToolsFlyers]);
         } catch (error) {
             console.error("Error fetching flyers:", error);
             res.status(500).json({ message: "Fehler beim Laden der Flyer" });

@@ -82,7 +82,7 @@ export default function NextServiceWeekday() {
                 })()}
                 {(() => {
                     const sermonText = pastorName && cleanPredigt
-                        ? `Predigt von ${pastorName} über: ${cleanPredigt}`
+                        ? `Predigt von ${pastorName} über ${cleanPredigt}`
                         : pastorName
                             ? `Predigt von ${pastorName}`
                             : cleanPredigt
