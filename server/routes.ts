@@ -1,12 +1,16 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { getChurchToolsService } from "./services/churchtools";
-import config from "../config.json";
+import type defaultConfig from "../config.json";
+import { readFileSync } from "fs";
 import path from "path";
 import { promises as fs } from "fs";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
+    const config: typeof defaultConfig = JSON.parse(
+        readFileSync(path.resolve(process.cwd(), "config.json"), "utf8"),
+    );
     const churchToolsService = getChurchToolsService();
     const roomTypeIds = config.resources?.roomTypeIds ?? [2];
     const titleOverrides = (config.calendars?.titleOverrides ?? {}) as Record<string, string>;

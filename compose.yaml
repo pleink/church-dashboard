@@ -1,0 +1,11 @@
+services:
+  dashboard:
+    image: ghcr.io/pleink/church-dashboard:latest
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./Slides_Dashboard:/app/Slides_Dashboard:ro
+    restart: unless-stopped
