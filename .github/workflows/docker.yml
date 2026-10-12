@@ -50,7 +50,8 @@ jobs:
           docker run -d --name dashboard -p 5000:5000 \
             -e BASIC_AUTH_USER=ci -e BASIC_AUTH_PASS=smoke-test church-dashboard:test
           trap 'docker logs dashboard; docker rm -f dashboard' EXIT
-          curl --fail --retry 15 --retry-connrefused --retry-delay 2 \
+          curl --fail --retry 15 --retry-all-errors --retry-delay 2 \
+            --connect-timeout 5 --max-time 10 \
             --user ci:smoke-test http://localhost:5000/api/signage/labels
           curl --fail --user ci:smoke-test http://localhost:5000/ > /dev/null
       - name: Build and publish multi-platform image
