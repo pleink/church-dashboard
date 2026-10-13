@@ -2,7 +2,7 @@ import React from "react";
 
 type SignageSectionProps = {
   title?: React.ReactNode;
-  icon?: React.ReactNode;
+  icon?: React.ReactElement<{ className?: string }>;
   iconClassName?: string;
   className?: string;
   headingClassName?: string;
