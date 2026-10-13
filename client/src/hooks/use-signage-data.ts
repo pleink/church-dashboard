@@ -160,3 +160,10 @@ export function useSignageLabels() {
     staleTime: Infinity,
   });
 }
+
+export function useSignageSettings() {
+  return useQuery<{ maxEventsDisplay: number }>({
+    queryKey: ["/api/signage/settings"],
+    staleTime: Infinity,
+  });
+}

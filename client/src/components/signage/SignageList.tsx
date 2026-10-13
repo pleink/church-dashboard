@@ -38,8 +38,8 @@ export function SignageList({
         <div className={className}>
             {title ? <h3 className={titleClassName}>{title}</h3> : null}
             <div className={listClassName}>
-                {items.map((item) => (
-                    <SignageListRow key={item.key} {...item} />
+                {items.map(({ key, ...item }) => (
+                    <SignageListRow key={key} {...item} />
                 ))}
             </div>
             {showEndDivider ? <div className="signage-divider" aria-hidden="true" /> : null}

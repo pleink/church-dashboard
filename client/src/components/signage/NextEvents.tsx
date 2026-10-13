@@ -1,7 +1,9 @@
-import { useTodayAppointments, useUpcomingAppointments, useSignageLabels } from "../../hooks/use-signage-data";
+import { useTodayAppointments, useUpcomingAppointments, useSignageLabels, useSignageSettings } from "../../hooks/use-signage-data";
 import { Calendar } from "lucide-react";
 import { SignageList } from "./SignageList";
 import { SignageSection } from "./SignageSection";
+import { appointmentKey, groupAppointments } from "@/lib/signage-appointments";
+import { getMaxEventsDisplay } from "@shared/signage-settings";
 
 type Props = {
     className?: string;
@@ -11,36 +13,19 @@ export default function NextEvents({ className }: Props) {
     const { data: todayAppointments = [], isLoading: isLoadingToday } = useTodayAppointments();
     const { data: upcomingAppointments = [], isLoading: isLoadingUpcoming } = useUpcomingAppointments();
     const { data: labels } = useSignageLabels();
+    const { data: settings, isLoading: isLoadingSettings } = useSignageSettings();
     const title = labels?.eventsTitle || "BLICK VORAUS";
     const todayLabel = labels?.eventsToday || "HEUTE BEI UNS";
     const upcomingLabel = labels?.eventsUpcoming || "IN DEN NÄCHSTEN TAGEN";
     const containerClass = className || "col-span-7 section-card p-12";
 
-    const today = new Date();
-    const isSameDay = (iso?: string) => {
-        if (!iso) return false;
-        const d = new Date(iso);
-        return (
-            d.getFullYear() === today.getFullYear() &&
-            d.getMonth() === today.getMonth() &&
-            d.getDate() === today.getDate()
-        );
-    };
-
-    const sortedToday = [...todayAppointments, ...upcomingAppointments]
-        .filter(a => a.title || a.resource)
-        .filter(a => isSameDay(a.startDateTime))
-        .sort((a, b) => (a.startDateTime || '').localeCompare(b.startDateTime || ''));
-
-    const sortedUpcoming = upcomingAppointments
-        .filter(a => a.title || a.resource)
-        .filter(a => !isSameDay(a.startDateTime))
-        .sort((a, b) => (a.startDateTime || '').localeCompare(b.startDateTime || ''))
-        .slice(0, Math.max(0, 6 - sortedToday.length)); // Cap total to 6
+    const { today: sortedToday, upcoming: sortedUpcoming } = groupAppointments(
+        todayAppointments, upcomingAppointments, new Date(), getMaxEventsDisplay(settings?.maxEventsDisplay),
+    );
 
     const headingIcon = <Calendar size={32} />;
 
-    if (isLoadingToday || isLoadingUpcoming) {
+    if (isLoadingToday || isLoadingUpcoming || isLoadingSettings) {
         return (
             <SignageSection
                 className={containerClass}
@@ -81,7 +66,7 @@ export default function NextEvents({ className }: Props) {
                     <SignageList
                         title={todayLabel}
                         items={sortedToday.map((appointment) => ({
-                            key: `today-${appointment.churchToolsId}-${appointment.calendarId}`,
+                            key: appointmentKey(appointment),
                             color: appointment.color || '#facc15',
                             title: appointment.title || 'Privater Termin',
                             subtitle: appointment.location || appointment.resource,
@@ -96,7 +81,7 @@ export default function NextEvents({ className }: Props) {
                     <SignageList
                         title={upcomingLabel}
                         items={sortedUpcoming.map((appointment) => ({
-                            key: `upcoming-${appointment.churchToolsId}-${appointment.calendarId}`,
+                            key: appointmentKey(appointment),
                             color: appointment.color || '#facc15',
                             title: appointment.isPublic && appointment.title ? appointment.title : 'Privater Termin',
                             titleClassName: `text-xl font-medium leading-tight ${appointment.isPublic && appointment.title ? 'text-gray-800' : 'text-gray-500 italic'}`,

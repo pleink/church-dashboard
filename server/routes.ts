@@ -5,6 +5,7 @@ import type defaultConfig from "../config.json";
 import { readFileSync } from "fs";
 import path from "path";
 import { promises as fs } from "fs";
+import { getMaxEventsDisplay } from "../shared/signage-settings";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -39,6 +40,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     };
     const flyerImageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"]);
     const flyerFileCache = new Map<string, { mtimeMs: number; dataUrl: string }>();
+
+    app.get("/api/signage/settings", (_req, res) => {
+        res.json({ maxEventsDisplay: getMaxEventsDisplay(config.signage?.maxEventsDisplay) });
+    });
 
     app.get("/api/signage/labels", (_req, res) => {
         res.json({

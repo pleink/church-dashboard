@@ -65,6 +65,11 @@ curl -H "Authorization: Login $CHURCHTOOLS_API_TOKEN" \
 ```
 
 ## Config-driven calendar mapping
+- `signage.maxEventsDisplay` sets the maximum number of appointments shown across
+  “Heute bei uns” and “In den nächsten Tagen” combined. Today’s appointments take
+  priority. The default is **8**; use a positive whole number (for example, `4`
+  for a smaller display). Missing or invalid values fall back to 8. Restart the
+  server/container and reload the display after changing `config.json`.
 - `config.json` controls which calendars are used and how they are displayed:
   - `calendars.sermons`: IDs shown as “Gottesdienst” in the dedicated hero card.
   - `calendars.churchEvents`: Church-wide events (e.g., Gemeindeanlässe).
